@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "tamasfe.even-better-toml",
+    "denoland.vscode-deno",
+    "humao.rest-client",
+    "hashicorp.terraform"
+  ]
+}

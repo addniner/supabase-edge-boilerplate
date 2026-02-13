@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "outDir": "../../dist/packages/swagger-ui",
+    "types": ["vitest/globals"]
+  },
+  "references": []
+}

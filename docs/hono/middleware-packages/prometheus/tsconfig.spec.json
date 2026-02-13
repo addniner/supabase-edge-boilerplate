@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "outDir": "../../dist/packages/prometheus",
+    "types": ["vitest/globals"]
+  },
+  "references": []
+}

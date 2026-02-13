@@ -1,0 +1,46 @@
+{
+  "name": "@hono/react-compat",
+  "type": "module",
+  "version": "0.0.3",
+  "description": "Alias of hono/jsx for replacement of React",
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/react-compat"
+  },
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc -b tsconfig.json --noEmit"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./*": {
+      "import": "./dist/*.js",
+      "require": "./dist/*.cjs"
+    }
+  },
+  "peerDependencies": {
+    "hono": ">=4.5.0"
+  },
+  "devDependencies": {
+    "hono": "^4.11.3",
+    "tsdown": "^0.15.9",
+    "typescript": "^5.8.2"
+  }
+}

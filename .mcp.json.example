@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "supabase_production": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=<YOUR_PRODUCTION_PROJECT_REF>&read_only=true&features=docs%2Caccount%2Cdebugging%2Cdatabase%2Cdevelopment%2Cbranching%2Cfunctions%2Cstorage"
+    },
+    "supabase_staging": {
+      "type": "http",
+      "url": "https://mcp.supabase.com/mcp?project_ref=<YOUR_STAGING_PROJECT_REF>&read_only=true&features=docs%2Caccount%2Cdebugging%2Cdatabase%2Cdevelopment%2Cbranching%2Cfunctions%2Cstorage"
+    },
+    "supabase_local": {
+      "type": "http",
+      "url": "http://localhost:54321/mcp?features=debugging%2Cdevelopment%2Cdatabase%2Cdocs"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noImplicitReturns": false,
+    "noUnusedLocals": false,
+    "outDir": "../../dist/packages/typia-validator",
+    "types": ["vitest/globals"]
+  },
+
+  "plugins": [
+    {
+      "transform": "typia/lib/transform"
+    }
+  ]
+}

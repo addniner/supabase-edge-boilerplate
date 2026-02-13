@@ -1,0 +1,13 @@
+@baseUrl = http://127.0.0.1:54321/functions/v1
+
+// auth headers
+@webhookAuthHeader = Authorization: Bearer {{$dotenv DB_WEBHOOK_SECRET}}
+@userAuthHeader = Authorization: Bearer 
+
+### Worker Webhook Test
+# webhook을 호출하면 내부적으로 webhook2를 호출합니다
+GET {{baseUrl}}/worker/webhook
+{{webhookAuthHeader}}
+
+###
+

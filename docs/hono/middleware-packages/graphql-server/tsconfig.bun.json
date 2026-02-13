@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "outDir": "../../dist/packages/graphql-server",
+    "types": ["bun"]
+  },
+  "include": ["src", "bun_test"],
+  "exclude": ["node_modules", "src/**/*.test.ts"]
+}

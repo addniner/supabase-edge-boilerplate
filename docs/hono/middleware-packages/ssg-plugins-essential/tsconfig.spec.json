@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": false,
+    "outDir": "../../dist/packages/ssg-plugins-essential",
+    "types": ["vitest/globals"]
+  },
+  "references": []
+}

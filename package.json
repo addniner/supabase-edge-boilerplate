@@ -1,0 +1,27 @@
+{
+  "name": "__PROJECT_NAME__",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:migrate:local": "ENV=local drizzle-kit migrate",
+    "db:migrate:staging": "ENV=staging drizzle-kit migrate",
+    "db:migrate:production": "ENV=production drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:push:local": "ENV=local drizzle-kit push",
+    "db:push:staging": "ENV=staging drizzle-kit push",
+    "db:push:production": "ENV=production drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:studio:local": "ENV=local drizzle-kit studio",
+    "db:studio:staging": "ENV=staging drizzle-kit studio",
+    "db:studio:production": "ENV=production drizzle-kit studio"
+  },
+  "devDependencies": {
+    "dotenv": "^17.2.3",
+    "drizzle-kit": "^0.31.8",
+    "drizzle-orm": "^0.45.1",
+    "postgres": "^3.4.8"
+  }
+}

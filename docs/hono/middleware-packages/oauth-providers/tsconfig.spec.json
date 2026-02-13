@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noImplicitReturns": false,
+    "noUncheckedIndexedAccess": false,
+    "outDir": "../../dist/packages/oauth-providers",
+    "types": ["vitest/globals"]
+  },
+  "include": ["src", "mocks.ts", "tsdown.config.ts", "vitest.config.ts"],
+  "references": []
+}

@@ -1,0 +1,50 @@
+# MacOS
+.DS_Store
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Environment variables
+.env*
+!.env.example
+*.secret
+
+node_modules
+
+
+# Cursor
+.cursor
+
+# Claude
+.claude
+CLAUDE.md
+
+# MCP
+.mcp.json
+
+
+# Supabase
+supabase/.temp
+supabase/.branches
+
+_coverage
+
+# Storage (keep only .gitkeep)
+supabase/storage/**
+!supabase/storage/**/
+!supabase/storage/**/.gitkeep
+
+
+# Terraform
+infra/**/.terraform/*
+infra/**/*.tfstate
+infra/**/*.tfstate.*
+infra/**/*.tfvars
+infra/**/*.tfplan
+
+.docs

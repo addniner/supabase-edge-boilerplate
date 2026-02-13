@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noImplicitReturns": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUnusedLocals": false,
+    "outDir": "../../dist/packages/standard-validator",
+    "types": ["vitest/globals"]
+  },
+  "include": ["__schemas__", "src", "tsdown.config.ts", "vitest.config.ts"],
+  "references": []
+}

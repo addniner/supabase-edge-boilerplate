@@ -1,0 +1,94 @@
+{
+  "name": "@hono/oauth-providers",
+  "version": "0.8.5",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/oauth-providers"
+  },
+  "description": "Social login for Hono JS, integrate authentication with facebook, github, google and linkedin to your projects.",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "./dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc -b tsconfig.json",
+    "test": "vitest",
+    "version:jsr": "yarn version:set $npm_package_version"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./*": {
+      "import": {
+        "types": "./dist/providers/*/index.d.ts",
+        "default": "./dist/providers/*/index.js"
+      },
+      "require": {
+        "types": "./dist/providers/*/index.d.cts",
+        "default": "./dist/providers/*/index.cjs"
+      }
+    }
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public",
+    "provenance": true
+  },
+  "typesVersions": {
+    "*": {
+      "facebook": [
+        "./dist/providers/facebook/index.d.ts"
+      ],
+      "github": [
+        "./dist/providers/github/index.d.ts"
+      ],
+      "google": [
+        "./dist/providers/google/index.d.ts"
+      ],
+      "linkedin": [
+        "./dist/providers/linkedin/index.d.ts"
+      ],
+      "x": [
+        "./dist/providers/x/index.d.ts"
+      ],
+      "discord": [
+        "./dist/providers/discord/index.d.ts"
+      ],
+      "twitch": [
+        "./dist/providers/twitch/index.d.ts"
+      ],
+      "msentra": [
+        "./dist/providers/msentra/index.d.ts"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "hono": ">=3.0.0"
+  },
+  "devDependencies": {
+    "hono": "^4.11.3",
+    "msw": "^2.10.5",
+    "tsdown": "^0.15.9",
+    "typescript": "^5.8.2",
+    "vitest": "^4.0.16"
+  },
+  "engines": {
+    "node": ">=18.4.0"
+  }
+}

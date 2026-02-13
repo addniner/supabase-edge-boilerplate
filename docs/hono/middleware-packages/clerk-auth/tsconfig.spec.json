@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noImplicitReturns": false,
+    "outDir": "../../dist/packages/clerk-auth",
+    "types": ["vitest/globals"]
+  },
+  "references": []
+}

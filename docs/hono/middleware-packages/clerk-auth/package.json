@@ -1,0 +1,62 @@
+{
+  "name": "@hono/clerk-auth",
+  "version": "3.1.0",
+  "description": "A third-party Clerk auth middleware for Hono",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc -b tsconfig.json",
+    "test": "vitest",
+    "version:jsr": "yarn version:set $npm_package_version"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/clerk-auth"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "dependencies": {
+    "@clerk/backend": "^2.29.2",
+    "@clerk/shared": "^3.42.0"
+  },
+  "peerDependencies": {
+    "hono": ">=3.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "hono": "^4.11.3",
+    "react": "^19.2.3",
+    "tsdown": "^0.15.9",
+    "typescript": "^5.8.2",
+    "vitest": "^4.0.16"
+  },
+  "engines": {
+    "node": ">=16.x.x"
+  }
+}

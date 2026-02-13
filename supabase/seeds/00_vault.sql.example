@@ -1,0 +1,19 @@
+-- Local Vault secrets
+-- Local Base URL for edge functions
+SELECT vault.create_secret(
+  -- 원격서버
+  -- 'https://gylsdvwnemfojcbmszfz.supabase.co',
+  -- 로컬서버
+  'http://host.docker.internal:54321', 
+  'supabase_project_url', 
+  'edge function base URL'
+);
+
+-- Webhook authentication token (DB_WEBHOOK_SECRET)
+SELECT vault.create_secret(
+  'your_secrets', 
+  'webhook_secret', 
+  'Webhook authentication token for database triggers'
+);
+
+

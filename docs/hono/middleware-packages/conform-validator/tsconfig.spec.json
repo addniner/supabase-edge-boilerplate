@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noUncheckedIndexedAccess": false,
+    "noUnusedLocals": false,
+    "outDir": "../../dist/packages/conform-validator",
+    "types": ["vitest/globals"]
+  },
+  "references": []
+}

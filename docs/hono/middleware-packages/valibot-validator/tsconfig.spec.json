@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noImplicitReturns": false,
+    "noUnusedLocals": false,
+    "outDir": "../../dist/packages/valibot-validator",
+    "types": ["vitest/globals"]
+  },
+  "references": []
+}

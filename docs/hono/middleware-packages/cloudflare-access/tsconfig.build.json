@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.build.json",
+  "compilerOptions": {
+    "noImplicitReturns": false,
+    "noUncheckedIndexedAccess": false,
+    "types": ["@cloudflare/workers-types"]
+  },
+  "references": []
+}

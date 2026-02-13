@@ -1,0 +1,87 @@
+{
+  "name": "@hono/esbuild-transpiler",
+  "version": "0.1.4",
+  "description": "esbuild Transpiler Middleware for Hono",
+  "type": "module",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc -b tsconfig.json",
+    "test": "vitest",
+    "version:jsr": "yarn version:set $npm_package_version"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./wasm": {
+      "import": {
+        "types": "./dist/transpilers/wasm.d.ts",
+        "default": "./dist/transpilers/wasm.js"
+      },
+      "require": {
+        "types": "./dist/transpilers/wasm.d.cts",
+        "default": "./dist/transpilers/wasm.cjs"
+      }
+    },
+    "./node": {
+      "import": {
+        "types": "./dist/transpilers/node.d.ts",
+        "default": "./dist/transpilers/node.js"
+      },
+      "require": {
+        "types": "./dist/transpilers/node.d.cts",
+        "default": "./dist/transpilers/node.cjs"
+      }
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "wasm": [
+        "./dist/transpilers/wasm"
+      ],
+      "node": [
+        "./dist/transpilers/node"
+      ]
+    }
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/honojs/middleware.git",
+    "directory": "packages/esbuild-transpiler"
+  },
+  "homepage": "https://github.com/honojs/middleware",
+  "peerDependencies": {
+    "hono": ">=3.9.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.27.2",
+    "esbuild-wasm": "^0.27.2",
+    "hono": "^4.11.3",
+    "tsdown": "^0.15.9",
+    "typescript": "^5.8.2",
+    "vitest": "^4.0.16"
+  },
+  "engines": {
+    "node": ">=18.14.1"
+  }
+}

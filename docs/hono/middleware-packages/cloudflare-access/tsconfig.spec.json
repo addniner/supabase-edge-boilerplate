@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noImplicitReturns": false,
+    "noUncheckedIndexedAccess": false,
+    "outDir": "../../dist/packages/cloudflare-access",
+    "types": ["@cloudflare/workers-types", "vitest/globals"]
+  },
+  "references": []
+}

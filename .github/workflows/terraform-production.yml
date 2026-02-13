@@ -1,0 +1,184 @@
+name: Terraform Production Environment
+
+# main 브랜치로 push 시 Production 환경 배포
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "infra/environments/production/**"
+      - "infra/modules/**"
+      - ".github/workflows/terraform-production.yml"
+  push:
+    branches: [main]
+    paths:
+      - "infra/environments/production/**"
+      - "infra/modules/**"
+      - ".github/workflows/terraform-production.yml"
+  # 수동 실행도 허용
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Terraform action to perform"
+        required: true
+        default: "plan"
+        type: choice
+        options:
+          - plan
+          - apply
+
+# 동시 실행 방지 (State 충돌 방지)
+concurrency:
+  group: terraform-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  terraform:
+    name: Terraform Plan & Apply (Production)
+    runs-on: ubuntu-latest
+
+    # 프로덕션 환경 설정: 승인 필요
+    # Settings > Environments > production 에서 설정
+    # Required reviewers 추가 권장
+    environment:
+      name: production
+
+    defaults:
+      run:
+        working-directory: ./infra/environments/production
+
+    steps:
+      # 1. 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Terraform 설치
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.0
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      # 3. Terraform 포맷 검사
+      - name: Terraform Format Check
+        id: fmt
+        run: terraform fmt -check -recursive
+        working-directory: ./infra
+
+      # 4. Terraform 초기화 (Terraform Cloud backend 사용)
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      # 5. Terraform 검증
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      # 6. Terraform Plan 실행
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color -input=false -out=tfplan
+        env:
+          TF_VAR_supabase_access_token: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          TF_VAR_organization_id: ${{ secrets.ORGANIZATION_ID }}
+          TF_VAR_database_password: ${{ secrets.DATABASE_PASSWORD }}
+          TF_VAR_site_url: ${{ secrets.SITE_URL }}
+          TF_VAR_external_google_client_id: ${{ secrets.EXTERNAL_GOOGLE_CLIENT_ID }}
+          TF_VAR_external_google_secret: ${{ secrets.EXTERNAL_GOOGLE_SECRET }}
+        continue-on-error: true
+
+      # 7. PR에 Plan 결과 코멘트
+      # 기존 comment가 있으면 업데이트, 없으면 새로 생성 (중복 방지)
+      - name: Comment PR with Plan
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        env:
+          PLAN: ${{ steps.plan.outputs.stdout }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // 1. 기존 Bot 코멘트 찾기
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+            const botComment = comments.find(comment => {
+              return comment.user.type === 'Bot' && comment.body.includes('PRODUCTION ENVIRONMENT')
+            })
+
+            // 2. 코멘트 내용 준비
+            const output = `#### 🚨 PRODUCTION ENVIRONMENT 🚨
+
+            #### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+
+            <details><summary>Show Plan</summary>
+
+            \`\`\`terraform
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>
+
+            **⚠️ WARNING: This will affect PRODUCTION infrastructure!**
+            **Environment:** \`production\`
+            **Pusher:** @${{ github.actor }}
+            **Action:** \`${{ github.event_name }}\`
+            **Working Directory:** \`infra/environments/production\`
+
+            Please review carefully before merging.`;
+
+            // 3. 기존 코멘트가 있으면 업데이트, 없으면 새로 생성
+            if (botComment) {
+              github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: output
+              })
+            } else {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: output
+              })
+            }
+
+      # 8. Plan 실패 시 워크플로우 중단
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      # 9. Terraform Apply (main 브랜치 push 또는 수동 apply 시)
+      - name: Terraform Apply
+        if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'apply')
+        run: terraform apply -auto-approve -input=false tfplan
+        env:
+          TF_VAR_supabase_access_token: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          TF_VAR_organization_id: ${{ secrets.ORGANIZATION_ID }}
+          TF_VAR_database_password: ${{ secrets.DATABASE_PASSWORD }}
+          TF_VAR_site_url: ${{ secrets.SITE_URL }}
+          TF_VAR_external_google_client_id: ${{ secrets.EXTERNAL_GOOGLE_CLIENT_ID }}
+          TF_VAR_external_google_secret: ${{ secrets.EXTERNAL_GOOGLE_SECRET }}
+
+      # 10. Outputs 저장
+      - name: Save Terraform Outputs
+        if: success() && ((github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'apply'))
+        run: terraform output -json > outputs.json
+
+      - name: Upload Outputs
+        if: success() && ((github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'apply'))
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-outputs-production
+          path: infra/environments/production/outputs.json
+          retention-days: 90

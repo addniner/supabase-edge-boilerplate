@@ -1,0 +1,46 @@
+{
+  "deno.enablePaths": [
+    "./supabase/functions"
+  ],
+  "deno.enable": true,
+  "deno.lint": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "denoland.vscode-deno"
+  },
+  "editor.formatOnSave": true,
+  "workbench.editor.labelFormat": "short",
+  "cSpell.words": [
+    "apikey",
+    "denoland",
+    "gotrue",
+    "hcaptcha",
+    "imgproxy",
+    "inbucket",
+    "Kyselify",
+    "kysely",
+    "logflare",
+    "mailpit",
+    "messagebird",
+    "oneshot",
+    "orioledb",
+    "pkey",
+    "plpgsql",
+    "pooler",
+    "postgrest",
+    "sendgrid",
+    "signup",
+    "signups",
+    "SIWS",
+    "Solana",
+    "supabase",
+    "supavisor",
+    "textlocal",
+    "timebox",
+    "TOTP",
+    "vonage",
+    "workos"
+  ]
+}
