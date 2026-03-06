@@ -1,19 +1,19 @@
-name: Deploy to Staging
+name: Deploy to Production
 
 on:
   push:
-    branches: [develop]
+    branches: [main]
     paths:
       - "supabase/**"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: deploy-production
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: staging
+    environment: production
 
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}

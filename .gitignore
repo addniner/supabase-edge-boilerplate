@@ -21,8 +21,8 @@ node_modules
 .cursor
 
 # Claude
-.claude
-CLAUDE.md
+.claude/settings.json
+.claude/settings.local.json
 
 # MCP
 .mcp.json
