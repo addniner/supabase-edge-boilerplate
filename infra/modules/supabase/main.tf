@@ -106,6 +106,7 @@ resource "supabase_settings" "main" {
   # 인증 설정: JSON 형식으로 인코딩하여 전달
   auth = jsonencode({
     site_url                  = var.site_url                  # 인증 후 리다이렉트 URL
+    uri_allow_list            = var.uri_allow_list            # 추가 리다이렉트 URL 목록 (콤마 구분)
     external_email_enabled    = var.external_email_enabled    # 이메일 로그인 활성화
     external_phone_enabled    = var.external_phone_enabled    # 전화번호 로그인 활성화
     external_apple_enabled    = var.external_apple_enabled    # Apple OAuth 활성화

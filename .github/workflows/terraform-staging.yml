@@ -17,7 +17,7 @@ on:
 
 # 동시 실행 방지 (State 충돌 방지)
 concurrency:
-  group: terraform-staging-${{ github.ref }}
+  group: ${{ github.event_name == 'push' && 'deploy-staging' || format('terraform-staging-pr-{0}', github.event.number) }}
   cancel-in-progress: false
 
 permissions:
@@ -76,9 +76,10 @@ jobs:
           TF_VAR_supabase_access_token: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           TF_VAR_organization_id: ${{ secrets.ORGANIZATION_ID }}
           TF_VAR_database_password: ${{ secrets.DATABASE_PASSWORD }}
-          TF_VAR_site_url: ${{ secrets.SITE_URL }}
+
           TF_VAR_external_google_client_id: ${{ secrets.EXTERNAL_GOOGLE_CLIENT_ID }}
           TF_VAR_external_google_secret: ${{ secrets.EXTERNAL_GOOGLE_SECRET }}
+
         continue-on-error: true
 
       # 7. PR에 Plan 결과 코멘트 (PR인 경우만)
@@ -150,9 +151,10 @@ jobs:
           TF_VAR_supabase_access_token: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           TF_VAR_organization_id: ${{ secrets.ORGANIZATION_ID }}
           TF_VAR_database_password: ${{ secrets.DATABASE_PASSWORD }}
-          TF_VAR_site_url: ${{ secrets.SITE_URL }}
+
           TF_VAR_external_google_client_id: ${{ secrets.EXTERNAL_GOOGLE_CLIENT_ID }}
           TF_VAR_external_google_secret: ${{ secrets.EXTERNAL_GOOGLE_SECRET }}
+
 
       # 10. 배포 후 출력값 저장 (다른 워크플로우에서 사용 가능)
       - name: Save Terraform Outputs

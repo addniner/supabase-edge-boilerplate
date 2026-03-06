@@ -10,6 +10,7 @@ Runs Deno type checking for all Supabase edge functions.
 ## Instructions
 
 1. Run the type checking script from project root:
+
    ```bash
    .scripts/deno-check.sh
    ```
@@ -25,7 +26,8 @@ Runs Deno type checking for all Supabase edge functions.
 
 ## Important Notes
 
-- This script checks all edge functions in `supabase/functions/`
+- This script checks the `api` edge function in `supabase/functions/api/`
 - Type errors must be fixed before deployment
 - The script runs without any arguments
 - Always run from the project root directory
+- Use `.scripts/deno-check.sh -r` to reload Deno cache if needed

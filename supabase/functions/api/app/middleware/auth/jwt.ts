@@ -90,7 +90,7 @@ function setUserToContext(
   c.set("userId", user.id);
   c.set("userEmail", user.email);
 
-  Logger.info(`Authenticated user: ${user.id} (${user.email})`);
+  Logger.debug(`Authenticated user: ${user.id}`);
 }
 
 /**

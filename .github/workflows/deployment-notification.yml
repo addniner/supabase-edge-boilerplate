@@ -2,7 +2,11 @@ name: Deployment Notification
 
 on:
   workflow_run:
-    workflows: ["Terraform Production Environment", "Terraform Staging Environment"]
+    workflows:
+      - "Deploy to Production"
+      - "Deploy to Staging"
+      - "Terraform Production Environment"
+      - "Terraform Staging Environment"
     types:
       - completed
 
@@ -11,7 +15,7 @@ jobs:
     name: Notify on Deployment Status
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure'
-    environment: ${{ github.event.workflow_run.name == 'Deploy to Production' && 'production' || 'staging' }}
+    environment: ${{ contains(github.event.workflow_run.name, 'Production') && 'production' || 'staging' }}
 
     steps:
       - name: Get commit information
@@ -30,7 +34,7 @@ jobs:
           WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
 
           # 워크플로우 이름에서 환경 추출
-          if [ "$WORKFLOW_NAME" = "Deploy to Production" ]; then
+          if echo "$WORKFLOW_NAME" | grep -qi "Production"; then
             ENV_NAME="production"
           else
             ENV_NAME="staging"
@@ -75,7 +79,7 @@ jobs:
                 "card": {
                   "header": {
                     "title": "${{ steps.commit_info.outputs.title }}",
-                    "subtitle": "${{ github.repository }} 배포 알림"
+                    "subtitle": "배포 알림"
                   },
                   "sections": [
                     {

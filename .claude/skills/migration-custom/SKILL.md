@@ -14,6 +14,7 @@ description: RPC 함수, 트리거, moddatetime 등 Drizzle 범위 밖의 커스
 ## RPC 작성 패턴
 
 ```sql
+-- 시그니처 변경 시 기존 함수 먼저 DROP
 DROP FUNCTION IF EXISTS my_function(text, text);
 
 CREATE OR REPLACE FUNCTION my_function(...)
