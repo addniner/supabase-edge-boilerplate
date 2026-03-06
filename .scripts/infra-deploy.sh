@@ -33,10 +33,6 @@ source "$COMMON_ENV"
 source "$ENV_FILE"
 set +a
 
-# 공통 변수 → TF_VAR 매핑 (Terraform 변수명과 .env 변수명이 다른 것만)
-export TF_VAR_supabase_access_token="$SUPABASE_ACCESS_TOKEN"
-export TF_VAR_organization_id="$ORGANIZATION_ID"
-
 WORK_DIR="infra/environments/$ENV"
 
 echo "🚀 [$ENV] Terraform $ACTION..."
