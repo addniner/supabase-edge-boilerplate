@@ -84,13 +84,11 @@ jobs:
         id: plan
         run: terraform plan -no-color -input=false -out=tfplan
         env:
-          TF_VAR_supabase_access_token: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          TF_VAR_organization_id: ${{ secrets.ORGANIZATION_ID }}
-          TF_VAR_database_password: ${{ secrets.DATABASE_PASSWORD }}
-
-          TF_VAR_external_google_client_id: ${{ secrets.EXTERNAL_GOOGLE_CLIENT_ID }}
-          TF_VAR_external_google_secret: ${{ secrets.EXTERNAL_GOOGLE_SECRET }}
-
+          TF_VAR_supabase_access_token: ${{ secrets.TF_VAR_SUPABASE_ACCESS_TOKEN }}
+          TF_VAR_organization_id: ${{ secrets.TF_VAR_ORGANIZATION_ID }}
+          TF_VAR_database_password: ${{ secrets.TF_VAR_DATABASE_PASSWORD }}
+          TF_VAR_external_google_client_id: ${{ secrets.TF_VAR_EXTERNAL_GOOGLE_CLIENT_ID }}
+          TF_VAR_external_google_secret: ${{ secrets.TF_VAR_EXTERNAL_GOOGLE_SECRET }}
         continue-on-error: true
 
       # 7. PR에 Plan 결과 코멘트
@@ -164,13 +162,11 @@ jobs:
         if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'apply')
         run: terraform apply -auto-approve -input=false tfplan
         env:
-          TF_VAR_supabase_access_token: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          TF_VAR_organization_id: ${{ secrets.ORGANIZATION_ID }}
-          TF_VAR_database_password: ${{ secrets.DATABASE_PASSWORD }}
-
-          TF_VAR_external_google_client_id: ${{ secrets.EXTERNAL_GOOGLE_CLIENT_ID }}
-          TF_VAR_external_google_secret: ${{ secrets.EXTERNAL_GOOGLE_SECRET }}
-
+          TF_VAR_supabase_access_token: ${{ secrets.TF_VAR_SUPABASE_ACCESS_TOKEN }}
+          TF_VAR_organization_id: ${{ secrets.TF_VAR_ORGANIZATION_ID }}
+          TF_VAR_database_password: ${{ secrets.TF_VAR_DATABASE_PASSWORD }}
+          TF_VAR_external_google_client_id: ${{ secrets.TF_VAR_EXTERNAL_GOOGLE_CLIENT_ID }}
+          TF_VAR_external_google_secret: ${{ secrets.TF_VAR_EXTERNAL_GOOGLE_SECRET }}
 
       # 10. Outputs 저장
       - name: Save Terraform Outputs
