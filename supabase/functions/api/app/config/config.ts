@@ -50,7 +50,7 @@ function loadSupabaseConfig(): SupabaseConfig {
  * 데이터베이스 환경 변수 로드
  */
 function loadDatabaseConfig(): DatabaseConfig {
-  const dbUrl = getEnv("DB_URL");
+  const dbUrl = getEnv("DATABASE_URL");
 
   try {
     const url = new URL(dbUrl);
@@ -65,8 +65,8 @@ function loadDatabaseConfig(): DatabaseConfig {
     };
   } catch (error) {
     throw new EnvironmentVariableError(
-      `Invalid DB_URL format: ${error instanceof Error ? error.message : String(error)}`,
-      "DB_URL",
+      `Invalid DATABASE_URL format: ${error instanceof Error ? error.message : String(error)}`,
+      "DATABASE_URL",
     );
   }
 }
