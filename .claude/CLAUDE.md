@@ -157,6 +157,16 @@ Never use `console.*` directly (lint rule: `no-console`).
 - Do not add routes to `WHITE_LISTED_ROUTES` carelessly — authentication is bypassed
 - Do not use `prepare: true` with transaction pooler (port 6543) — already handled in `drizzle.context.ts`
 
+## Detailed Rules
+
+Path-specific rules are auto-loaded in `.claude/rules/`:
+
+- **[database.md](.claude/rules/database/database.md)** - DB schema, RLS, timestamps, migrations
+- **[repositories.md](.claude/rules/layers/repositories.md)** - Data access layer
+- **[services.md](.claude/rules/layers/services.md)** - Business logic layer
+- **[validation.md](.claude/rules/layers/validation.md)** - Zod schemas
+- **[infra.md](.claude/rules/infra.md)** - Terraform infrastructure
+
 ## Reference Docs
 
 프로젝트 관련 문서는 `docs/` 폴더를 참고:
