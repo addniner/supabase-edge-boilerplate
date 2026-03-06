@@ -1,4 +1,4 @@
-import type { ErrorItem } from "@types";
+import type { ErrorItem } from "@shared/types";
 
 /**
  * 공통 커스텀 에러 베이스 클래스

@@ -34,9 +34,6 @@
     "@shared/interfaces": "./shared/interfaces/index.ts",
     "@shared/validation": "./shared/validation/index.ts",
 
-    "@types": "./shared/types/index.ts",
-    "@enums": "./shared/enums/index.ts",
-
     "@test": "./__tests__/index.ts",
     "@test/setup": "./__tests__/setup.ts",
     "@test/fixtures": "./__tests__/fixtures.ts",

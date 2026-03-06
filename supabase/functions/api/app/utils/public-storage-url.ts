@@ -1,5 +1,5 @@
 import { getConfig } from "@app/config";
-import type { StorageConfig } from "@types";
+import type { StorageConfig } from "@shared/types";
 import { replaceKongWithNgrok } from "./ngrok.ts";
 
 /**

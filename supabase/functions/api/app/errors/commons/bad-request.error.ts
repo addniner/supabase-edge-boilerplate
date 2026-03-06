@@ -1,5 +1,5 @@
 import { CustomError } from "../custom-error.ts";
-import type { ErrorItem } from "@types";
+import type { ErrorItem } from "@shared/types";
 
 export class BadRequestError extends CustomError {
   constructor(message = "Bad Request", errors?: ErrorItem[] | null) {

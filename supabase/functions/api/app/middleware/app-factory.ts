@@ -16,7 +16,7 @@ import { errorHandler, notFoundHandler } from "./handlers.ts";
 import { languageMiddleware } from "./language.ts";
 import { requestIdMiddleware } from "./request-id.ts";
 
-import type { AuthStrategy } from "@types";
+import type { AuthStrategy } from "@shared/types";
 
 /**
  * 공통 미들웨어가 적용된 Hono 앱 생성

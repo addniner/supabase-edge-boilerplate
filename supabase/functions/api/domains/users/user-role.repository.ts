@@ -6,7 +6,7 @@
 
 import { eq } from "@drizzle-orm";
 import { getDrizzle, rolePermissions, userRoles } from "@db";
-import type { Permission, Role } from "@enums";
+import type { Permission, Role } from "@shared/enums";
 import type { IUserRoleRepository } from "@shared/interfaces";
 
 export class UserRoleRepository implements IUserRoleRepository {

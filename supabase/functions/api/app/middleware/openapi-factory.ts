@@ -16,7 +16,7 @@ import { errorHandler, notFoundHandler } from "./handlers.ts";
 import { languageMiddleware } from "./language.ts";
 import { requestIdMiddleware } from "./request-id.ts";
 
-import type { AuthStrategy } from "@types";
+import type { AuthStrategy } from "@shared/types";
 
 /**
  * OpenAPI 앱에서 사용되는 Context 변수 타입

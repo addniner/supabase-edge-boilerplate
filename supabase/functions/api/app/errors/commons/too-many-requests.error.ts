@@ -1,5 +1,5 @@
 import { CustomError } from "../custom-error.ts";
-import type { ErrorItem } from "@types";
+import type { ErrorItem } from "@shared/types";
 
 export class TooManyRequestsError extends CustomError {
   constructor(message = "Too Many Requests", errors?: ErrorItem[] | null) {

@@ -1,5 +1,5 @@
 import type { Context } from "@hono";
-import type { ApiEnvelope, ErrorItem } from "@types";
+import type { ApiEnvelope, ErrorItem } from "@shared/types";
 /**
  * 응답 헬퍼 클래스
  * 모든 도메인에서 공통으로 사용할 수 있는 응답 생성 유틸리티

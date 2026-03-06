@@ -12,7 +12,7 @@ import type {
   DevConfig,
   StorageConfig,
   SupabaseConfig,
-} from "@types";
+} from "@shared/types";
 
 /**
  * 필수 환경 변수 검증

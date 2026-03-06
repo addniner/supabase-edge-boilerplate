@@ -19,7 +19,7 @@ import { except } from "@hono/combine";
 
 import { WHITE_LISTED_ROUTES } from "@app/config";
 import { ForbiddenError } from "@app/errors";
-import { Permission, Role } from "@enums";
+import { Permission, Role } from "@shared/enums";
 import { Logger } from "@app/utils";
 import { UserRoleRepository } from "@domains/users";
 

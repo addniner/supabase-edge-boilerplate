@@ -4,7 +4,7 @@ import type {
   SignedUploadUrlData,
   SupabaseCreateSignedUrlData,
   UploadFileInfo,
-} from "@types";
+} from "@shared/types";
 import { InternalServerError } from "@app/errors";
 import { isLocal } from "@app/config";
 import { Logger, replaceKongWithNgrok } from "@app/utils";
