@@ -6,7 +6,7 @@ import {
   serial,
   text,
   timestamp,
-} from "drizzle-orm/pg-core";
+} from "@drizzle-orm/pg-core";
 
 // ============================================
 // RBAC (역할 기반 접근 제어)

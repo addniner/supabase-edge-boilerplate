@@ -18,7 +18,7 @@ export function setupTestEnv(): void {
 
   // 데이터베이스 설정
   Deno.env.set("SUPABASE_DB_URL", "postgresql://test:test@localhost:5432/test");
-  Deno.env.set("DB_URL", "postgresql://test:test@localhost:5432/test");
+  Deno.env.set("DATABASE_URL", "postgresql://test:test@localhost:5432/test");
   Deno.env.set("DB_SSL_CERT", "test-ssl-cert");
   Deno.env.set("DB_WEBHOOK_SECRET", "test-db-webhook-secret");
 

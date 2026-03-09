@@ -35,7 +35,7 @@ variable "project_name" {
   description = "Name of the Supabase project"
   type        = string
   # Supabase 프로젝트 이름
-  # 예: "autowing-dev", "autowing-prod"
+  # 예: "my-project-dev", "my-project-prod"
 }
 
 variable "database_password" {
@@ -97,7 +97,7 @@ variable "site_url" {
   description = "Site URL for authentication"
   type        = string
   # 인증 후 리다이렉트될 사이트 URL
-  # 예: "http://localhost:3000" (개발), "https://autowing.com" (프로덕션)
+  # 예: "http://localhost:3000" (개발), "https://your-domain.com" (프로덕션)
   # OAuth 콜백 URL로도 사용됨
 }
 
@@ -106,7 +106,7 @@ variable "uri_allow_list" {
   type        = string
   default     = ""
   # 인증 후 리다이렉트가 허용되는 추가 URL 목록 (콤마 구분 문자열)
-  # 예: "https://autowing.com/auth/callback,autowing://auth/callback"
+  # 예: "https://your-domain.com/auth/callback,myapp://auth/callback"
 }
 
 variable "external_email_enabled" {
@@ -155,5 +155,21 @@ variable "external_google_secret" {
   default     = ""
   sensitive   = true
   # Google Cloud Console에서 OAuth 클라이언트 생성 시 발급되는 시크릿
+}
+
+# -----------------------------------------------------------------------------
+# Auth Hook 설정 변수
+# -----------------------------------------------------------------------------
+
+variable "hook_custom_access_token_enabled" {
+  description = "Enable custom access token hook (JWT Claims에 RBAC role/permissions 주입)"
+  type        = bool
+  default     = false
+}
+
+variable "hook_custom_access_token_uri" {
+  description = "URI of the custom access token hook function"
+  type        = string
+  default     = "pg-functions://postgres/public/custom_access_token_hook"
 }
 

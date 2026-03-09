@@ -28,7 +28,7 @@ export type AppEnv = {
     userId: string;
     userEmail: string | undefined;
     userRole: string;
-    userPermissions: string[];
+    permissions: string[];
   };
 };
 

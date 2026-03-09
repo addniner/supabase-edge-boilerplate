@@ -45,6 +45,7 @@
     "@std/testing/bdd": "jsr:@std/testing@^1/bdd",
 
     "@hono": "npm:hono@~4.7.0",
+    "@hono/combine": "npm:hono@~4.7.0/combine",
     "@hono/language": "npm:hono@~4.7.0/language",
     "@hono/zod-openapi": "npm:@hono/zod-openapi@~0.18.0",
     "@hono/swagger-ui": "npm:@hono/swagger-ui@~0.5.0",
@@ -53,9 +54,7 @@
     "@drizzle-orm": "npm:drizzle-orm@1.0.0-beta.9-e89174b",
     "@drizzle-orm/pg-core": "npm:drizzle-orm@1.0.0-beta.9-e89174b/pg-core",
     "@drizzle-orm/postgres-js": "npm:drizzle-orm@1.0.0-beta.9-e89174b/postgres-js",
-    "drizzle-orm": "npm:drizzle-orm@1.0.0-beta.9-e89174b",
-    "drizzle-orm/pg-core": "npm:drizzle-orm@1.0.0-beta.9-e89174b/pg-core",
-    "drizzle-orm/supabase": "npm:drizzle-orm@1.0.0-beta.9-e89174b/supabase",
+    "@drizzle-orm/supabase": "npm:drizzle-orm@1.0.0-beta.9-e89174b/supabase",
     "@postgres-js": "npm:postgres@3.4.5",
     "@sql-formatter": "npm:sql-formatter@~15.0.0",
     "@std/fmt": "jsr:@std/fmt@^1",

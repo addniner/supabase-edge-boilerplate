@@ -14,8 +14,20 @@ on:
       - "infra/environments/staging/**"
       - "infra/modules/**"
       - ".github/workflows/terraform-staging.yml"
+  # 수동 실행도 허용
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Terraform action to perform"
+        required: true
+        default: "plan"
+        type: choice
+        options:
+          - plan
+          - apply
 
 # 동시 실행 방지 (State 충돌 방지)
+# PR은 개별 그룹으로 병렬 Plan 가능, push(apply)는 순차 실행
 concurrency:
   group: ${{ github.event_name == 'push' && 'deploy-staging' || format('terraform-staging-pr-{0}', github.event.number) }}
   cancel-in-progress: false

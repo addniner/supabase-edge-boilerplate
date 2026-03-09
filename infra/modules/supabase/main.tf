@@ -71,6 +71,7 @@ resource "supabase_project" "main" {
     # ignore_changes: 지정한 속성의 변경사항을 무시 (재생성 방지)
     ignore_changes = [
       database_password, # 비밀번호는 최초 생성 후 변경사항 무시
+      organization_id,   # 프로젝트 생성 후 변경 불가 (프로바이더 제약)
     ]
     # 이유: 보안상 비밀번호는 생성 후 Supabase 대시보드에서 직접 관리
     # Terraform으로 비밀번호를 변경하면 기존 연결이 끊어질 수 있음
@@ -113,6 +114,9 @@ resource "supabase_settings" "main" {
     external_google_enabled   = var.external_google_enabled   # Google OAuth 활성화
     external_google_client_id = var.external_google_client_id # Google OAuth 클라이언트 ID
     external_google_secret    = var.external_google_secret    # Google OAuth 시크릿
+
+    hook_custom_access_token_enabled = var.hook_custom_access_token_enabled
+    hook_custom_access_token_uri     = var.hook_custom_access_token_uri
   })
 }
 

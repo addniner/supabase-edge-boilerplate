@@ -27,6 +27,7 @@ on:
           - apply
 
 # 동시 실행 방지 (State 충돌 방지)
+# PR은 개별 그룹으로 병렬 Plan 가능, push/dispatch(apply)는 순차 실행
 concurrency:
   group: ${{ github.event_name == 'pull_request' && format('terraform-production-pr-{0}', github.event.number) || 'deploy-production' }}
   cancel-in-progress: false
