@@ -1,12 +1,15 @@
 // Drizzle ORM 스키마 정의
 // Deno + Node.js 양쪽에서 사용
 
+import { sql } from "@drizzle-orm";
 import {
+  pgPolicy,
   pgTable,
   serial,
   text,
   timestamp,
 } from "@drizzle-orm/pg-core";
+import { authenticatedRole } from "@drizzle-orm/supabase";
 
 // ============================================
 // RBAC (역할 기반 접근 제어)
@@ -24,7 +27,13 @@ export const userRoles = pgTable("user_roles", {
     .notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow()
     .notNull(),
-});
+}, (table) => [
+  pgPolicy("user_roles_select_own", {
+    for: "select",
+    to: authenticatedRole,
+    using: sql`(select auth.uid())::text = ${table.userId}`,
+  }),
+]);
 
 /**
  * role_permissions 테이블
@@ -36,7 +45,13 @@ export const rolePermissions = pgTable("role_permissions", {
   permission: text("permission").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow()
     .notNull(),
-});
+}, () => [
+  pgPolicy("role_permissions_select_authenticated", {
+    for: "select",
+    to: authenticatedRole,
+    using: sql`true`,
+  }),
+]);
 
 // ============================================
 // 타입 추론을 위한 export
