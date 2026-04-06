@@ -51,6 +51,12 @@ variable "database_password" {
 # 인프라 설정 변수
 # -----------------------------------------------------------------------------
 
+variable "instance_size" {
+  description = "Supabase instance size (micro, small, medium, large, etc.)"
+  type        = string
+  default     = "micro"
+}
+
 variable "region" {
   description = "AWS region for the Supabase project"
   type        = string
@@ -106,7 +112,7 @@ variable "uri_allow_list" {
   type        = string
   default     = ""
   # 인증 후 리다이렉트가 허용되는 추가 URL 목록 (콤마 구분 문자열)
-  # 예: "https://your-domain.com/auth/callback,myapp://auth/callback"
+  # 예: "myapp://auth/callback,https://your-domain.com/callback"
 }
 
 variable "external_email_enabled" {

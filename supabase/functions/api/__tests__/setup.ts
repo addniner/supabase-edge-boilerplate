@@ -11,6 +11,15 @@ export const TEST_STORAGE_CONFIG = {
 };
 
 export function setupTestEnv(): void {
+  // Supabase Edge Runtime polyfill (테스트 환경)
+  // deno-lint-ignore no-explicit-any
+  if (typeof (globalThis as any).EdgeRuntime === "undefined") {
+    // deno-lint-ignore no-explicit-any
+    (globalThis as any).EdgeRuntime = {
+      waitUntil: (promise: Promise<unknown>) => promise,
+    };
+  }
+
   // Supabase 설정
   Deno.env.set("SUPABASE_URL", "https://test.supabase.co");
   Deno.env.set("SUPABASE_ANON_KEY", "test-anon-key");
@@ -24,16 +33,6 @@ export function setupTestEnv(): void {
 
   // 인증/보안 설정
   Deno.env.set("INTERNAL_WEBHOOK_SECRET", "test-webhook-secret");
-
-  // Figma 설정
-  Deno.env.set("FIGMA_FILE_ID", "test-figma-file-id");
-  Deno.env.set("FIGMA_ACCESS_TOKEN", "test-figma-access-token");
-
-  // AI 설정
-  Deno.env.set("GOOGLE_GENERATIVE_AI_API_KEY", "test-google-ai-key");
-
-  // Google 설정
-  Deno.env.set("GOOGLE_APPLICATION_CREDENTIALS", "test-google-creds");
 
   // 환경 설정
   Deno.env.set("ENVIRONMENT", "local");

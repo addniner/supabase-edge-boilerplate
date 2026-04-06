@@ -15,61 +15,91 @@ Supabase Edge Functions (Deno) + Hono + Drizzle ORM + Zod
 
 ```bash
 .scripts/serve.sh                   # local dev (hot reload)
-.scripts/deno-check.sh              # type check + lint + test
+.scripts/deno-check.sh              # 통합 검증: type check → lint → test + coverage
+                                    #   출력: _coverage/lcov.info (lcov 리포트)
 .scripts/deno-check.sh -r           # with cache reload
 deno test --allow-all --reporter=dot # tests only (run from supabase/functions/api/)
 ```
 
 All commands must run from the repo root. Deno commands run in `supabase/functions/api/`.
 
-## Architecture
+## Architecture (Clean Architecture)
 
 ```
 supabase/functions/api/
-├── index.ts          # Entry: createOpenAPIApp (jwt) + createHonoApp (webhook)
-├── app/              # Framework layer (middleware, errors, utils, config)
-├── clients/          # External service clients (Supabase)
-├── db/               # Drizzle context, base repository, schema
-├── domains/          # DDD domain modules
-│   └── _example/     # Reference implementation
-├── shared/           # Types, enums, interfaces, validation
-└── __tests__/        # Test setup and fixtures
+├── index.ts               # Entry: createApp (jwt/webhook)
+├── edge-runtime.d.ts      # Supabase Edge Runtime 전역 타입
+│
+├── domain/                # Domain Layer — 비즈니스 규칙, 타입
+│   ├── value-objects/     # VO, enum, 도메인 규칙 함수
+│   ├── gateways/          # 외부 시스템 인터페이스
+│   ├── repositories/      # repository 인터페이스 (계약)
+│   └── exceptions/        # DomainError + 하위 클래스 (HTTP 상태코드 없음)
+│
+├── application/           # Application Layer — UseCase + DTO
+│   └── usecases/          # 비즈니스 로직 (기능 단위 그룹)
+│       └── my-feature/    # 예시
+│
+├── presentation/          # Presentation Layer — HTTP 관심사
+│   ├── errors/            # domain/exceptions re-export + HTTP 매핑
+│   ├── middleware/         # JWT, RBAC, CORS, error-handler, response
+│   │   └── auth/          # auth.types.ts 포함
+│   ├── routes/            # OpenAPI route + schema (도메인별)
+│   │   └── index.ts       # barrel export (@routes alias)
+│   └── utils/             # oas 헬퍼 (openapi.ts)
+│
+├── infrastructure/        # Infrastructure Layer — 외부 시스템 통신
+│   ├── clients/           # 외부 API 클라이언트
+│   ├── config/            # 환경변수 + config.types.ts
+│   ├── db/                # Drizzle context, schema(엔티티 타입), BaseRepository
+│   ├── factories/         # gateway factory
+│   ├── logger/            # Logger
+│   ├── repositories/      # DB 접근 (BaseRepository 확장)
+│   └── utils/             # ngrok, public-storage-url, image, performance
+│
+├── domains/               # Legacy domain modules (마이그레이션 대상)
+│   └── _example/          # Reference implementation
+│
+└── __tests__/             # Test setup (env.ts)
 ```
 
 ## Import Aliases (MUST use)
 
 ```typescript
-import type { Context } from "@app";
-import { Response, zValidator, getValidated } from "@app/middleware";
-import { NotFoundError, BadRequestError } from "@app/errors";
-import { Logger } from "@app/utils";
-import { getConfig } from "@app/config";
+import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
+import { Response, requirePermission } from "@middleware";
+import { NotFoundError, BadRequestError } from "@domain/exceptions";
+import { Logger } from "@logger";
+import { getConfig } from "@config";
 import { getDrizzle } from "@db";
-import { Permission, Role } from "@shared/enums";
-import type { ApiEnvelope } from "@shared/types";
+import { oas } from "@openapi";
+import { Permission, Role } from "@domain";
+import type { MyGateway } from "@domain/gateways";
+import type { MyRepository } from "@domain/repositories";
+import { MyRepositoryImpl } from "@repositories";
+import { MyGatewayFactory } from "@factories";
 ```
 
-Never use relative paths across domain boundaries. Always register new domains in `deno.json` imports.
+Never use relative paths across layer boundaries. Always register new aliases in `deno.json` imports.
 
-## Domain Pattern
-
-Every domain follows this structure:
+## Layer Dependencies
 
 ```
-domains/your-domain/
-├── index.ts                      # re-export only
-├── your-domain.route.ts          # HTTP layer only
-├── your-domain.schema.ts         # Zod schemas + inferred types
-├── your-domain.service.ts        # Facade: orchestrates usecases
-├── your-domain.repository.ts     # DB access only, extends BaseRepository
-└── usecases/
-    ├── index.ts
-    └── create-your-domain.usecase.ts
+presentation → application → domain ← infrastructure
+                    ↓
+              infrastructure (usecase에서 client/repo 직접 import — 생성자 기본값 DI)
 ```
 
-After creating a domain, add to `deno.json` imports and register route in `index.ts`.
+- **domain**: 순수 비즈니스 규칙 + 타입. `import type` from `@db`만 허용 (엔티티 타입). gateway/repository 인터페이스 정의
+- **application**: domain + infrastructure import (생성자 기본값 DI). 예외는 `@domain/exceptions`에서 import
+- **presentation**: application(usecase) + domain import. infrastructure 직접 참조 금지
+- **infrastructure**: domain import 가능. repository/client 구현체는 domain 인터페이스를 implements
 
-## Response Patterns
+## Route Pattern (OpenAPI)
+
+`createRoute` + `.openapi()` + `oas` 헬퍼 패턴. 상세는 [routes.md](.claude/rules/layers/routes.md) 참고.
+
+### Response (핸들러용)
 
 ```typescript
 return Response.ok(c, data);          // 200
@@ -80,31 +110,58 @@ throw new ValidationError("msg", errors); // 400
 throw new ForbiddenError("msg");      // 403
 ```
 
-Never use `c.json()` directly. Always use `Response.*` helpers.
+## Usecase Pattern
 
-## Request Validation
+각 usecase 그룹은 자기 dto와 mapper를 소유:
+
+```
+application/usecases/my-feature/
+├── do-something.usecase.ts
+├── get-something.usecase.ts
+├── dto.ts              # Input/Output 타입 정의
+├── mapper.ts           # 외부 응답 → 내부 모델 변환
+├── index.ts            # barrel export
+└── *.usecase.test.ts
+```
 
 ```typescript
-route.post("/", zValidator("json", CreateSchema), async (c: Context) => {
-  const input = getValidated<CreateInput>(c);
-  // ...
-});
-route.get("/", zValidator("query", ListQuerySchema), async (c: Context) => {
-  const query = getValidated<ListQueryInput>(c);
-});
+export class DoSomethingUseCase {
+  constructor(
+    private myRepo: MyRepository = new MyRepositoryImpl(),
+    private myGateway: MyGateway = new MyGatewayImpl(),
+  ) {}
+
+  async execute(input: { userId: string; itemId: string }) {
+    // 비즈니스 로직
+  }
+}
 ```
+
+규칙:
+- 클래스 1개 = 파일 1개, public 메서드는 `execute()` 하나만
+- 여러 repository/client를 자유롭게 조합 가능
+- DI 패턴: 생성자 기본값 (프로덕션), mock 주입 (테스트)
+- gateway factory DI: `private gatewayFactory: typeof createMyGateway = createMyGateway`
+- 테스트 파일 동위치: `*.usecase.test.ts`
+
+상세는 [usecases.md](.claude/rules/layers/usecases.md) 참고.
 
 ## Database Patterns
 
 ```typescript
-// Extend BaseRepository
-export class MyRepository extends BaseRepository {
+// domain/repositories/ — 인터페이스 정의
+export interface MyRepository {
+  findById(id: string): Promise<MyEntity | null>;
+}
+
+// infrastructure/repositories/ — 구현체 (Impl 접미사)
+export class MyRepositoryImpl extends BaseRepository implements MyRepository {
   async findById(id: string) {
     return await this.db.select().from(myTable).where(eq(myTable.id, id)).limit(1);
   }
 }
 
-// Schema: use $inferSelect / $inferInsert for types
+// infrastructure/db/schema.ts — 엔티티 타입
 export type MyEntity = typeof myTable.$inferSelect;
 export type NewMyEntity = typeof myTable.$inferInsert;
 ```
@@ -122,12 +179,11 @@ const user = c.get("user");         // JWT payload with custom claims
 const userRole = c.get("userRole");
 const permissions = c.get("permissions");
 
-// Route-level permission guard
-route.delete("/:id", requirePermission(Permission.RESOURCES_DELETE), handler);
-route.post("/", requireAnyPermission([Permission.RESOURCES_CREATE, Permission.ALL]), handler);
+// Route-level permission guard (createRoute의 middleware에 지정)
+middleware: [requirePermission(Permission.RESOURCES_DELETE)] as const,
 ```
 
-Public routes: register in `WHITE_LISTED_ROUTES` in `app/config/routes.ts`.
+Public routes: register in `WHITE_LISTED_ROUTES` in `infrastructure/config/routes.ts`.
 
 ## Logging
 
@@ -150,12 +206,16 @@ Never use `console.*` directly (lint rule: `no-console`).
 ## Do NOT
 
 - Do not use `console.log/warn/error` — use `Logger.*`
-- Do not use `c.json()` directly — use `Response.*`
-- Do not throw plain strings — use `CustomError` subclasses from `@app/errors`
-- Do not import across domains with relative paths — use `@domains/your-domain`
-- Do not write to DB from route handlers — go through service → usecase → repository
+- Do not use `c.json()` directly in route handlers — use `Response.*`
+- Do not use `zValidator`/`getValidated` in `.openapi()` handlers — use `c.req.valid()`
+- Do not annotate `c: Context` in `.openapi()` handlers — 타입 자동 추론 필요
+- Do not throw plain strings — use `DomainError` subclasses from `@domain/exceptions`
+- Do not import across layers with relative paths — use aliases
+- Do not write to DB from route handlers — go through usecase → repository
+- Do not create service files — all business logic goes in `usecases/`
 - Do not add routes to `WHITE_LISTED_ROUTES` carelessly — authentication is bypassed
 - Do not use `prepare: true` with transaction pooler (port 6543) — already handled in `drizzle.context.ts`
+- Do not put types in `shared/` — each layer owns its types
 
 ## Detailed Rules
 
@@ -163,8 +223,10 @@ Path-specific rules are auto-loaded in `.claude/rules/`:
 
 - **[database.md](.claude/rules/database/database.md)** - DB schema, RLS, timestamps, migrations
 - **[repositories.md](.claude/rules/layers/repositories.md)** - Data access layer
-- **[services.md](.claude/rules/layers/services.md)** - Business logic layer
-- **[validation.md](.claude/rules/layers/validation.md)** - Zod schemas
+- **[usecases.md](.claude/rules/layers/usecases.md)** - Business logic layer
+- **[clients.md](.claude/rules/layers/clients.md)** - External API clients
+- **[routes.md](.claude/rules/layers/routes.md)** - HTTP route layer (OpenAPI)
+- **[testing.md](.claude/rules/layers/testing.md)** - Test conventions, mock patterns, coverage
 - **[infra.md](.claude/rules/infra.md)** - Terraform infrastructure
 
 ## Reference Docs
@@ -181,23 +243,23 @@ Path-specific rules are auto-loaded in `.claude/rules/`:
 
 | 조건 | 작업 방식 |
 |---|---|
-| 단일 기능, 기존 도메인 수정/확장 | **Solo** — 직접 처리 |
-| 단일 기능, 새 도메인 1개 생성 | **Solo** — `_example` 참고하여 직접 생성 |
+| 단일 기능, 기존 usecase 수정/확장 | **Solo** — 직접 처리 |
+| 단일 기능, 새 usecase 그룹 생성 | **Solo** — 직접 생성 |
 | 버그 수정, 리팩토링, 공유 코드 변경 | **Solo** — 직접 처리 |
-| 독립적인 2개 이상 도메인의 새 기능 | **Team** — 도메인별 에이전트 병렬 배치 |
+| 독립적인 2개 이상 usecase 그룹의 새 기능 | **Team** — 그룹별 에이전트 병렬 배치 |
 | 기능 간 의존성이 있는 복수 기능 | **순차 처리** — 의존 순서대로 Solo 또는 Team |
 
 ### 판단 프로세스
 
-1. **요청 분석** — 몇 개 기능인지, 어떤 도메인에 해당하는지 파악
+1. **요청 분석** — 몇 개 기능인지, 어떤 usecase 그룹에 해당하는지 파악
 2. **독립성 평가** — 기능 간 공유 테이블/서비스 의존성 확인
 3. **방식 결정** — 위 기준표에 따라 Solo/Team 결정
-4. **사용자에게 고지** — 결정된 방식을 간단히 알린 후 진행 (예: "3개 독립 도메인이므로 팀으로 병렬 진행합니다")
+4. **사용자에게 고지** — 결정된 방식을 간단히 알린 후 진행
 
 ### Team 구성 시
 
-- 도메인별 에이전트 1명 (Sonnet, `general-purpose`, `bypassPermissions`)
-- 각 에이전트는 자신의 도메인 파일만 생성/수정
+- usecase 그룹별 에이전트 1명 (Sonnet, `general-purpose`, `bypassPermissions`)
+- 각 에이전트는 자신의 usecase 그룹 파일만 생성/수정
 - 공유 파일 통합은 리드(본인)가 담당
 - 완료 후 `.scripts/deno-check.sh`로 전체 검증
 
@@ -206,5 +268,5 @@ Path-specific rules are auto-loaded in `.claude/rules/`:
 코드를 수정하는 에이전트(팀원 포함)는 반드시 다음을 준수:
 
 - **수정 후 검증 필수**: 코드 수정 완료 시 `.scripts/deno-check.sh` 실행하여 type check + lint + test 통과 확인
-- **공유 파일 수정 금지 (팀 작업 시)**: 팀으로 병렬 작업 시, 각 에이전트는 자신의 도메인 파일만 수정. 공유 파일(`deno.json`, `index.ts`, `db/schema.ts`)은 팀 리드가 통합
-- **모듈 최상위 레벨 주의**: `app/config/routes.ts` 등 최상위에서 실행되는 코드에서 `getConfig()` 사용 금지 (환경변수 미설정 시 테스트 실패). `Deno.env.get()` 직접 사용
+- **공유 파일 수정 금지 (팀 작업 시)**: 팀으로 병렬 작업 시, 각 에이전트는 자신의 파일만 수정. 공유 파일(`deno.json`, `index.ts`, `db/schema.ts`)은 팀 리드가 통합
+- **모듈 최상위 레벨 주의**: `infrastructure/config/routes.ts` 등 최상위에서 실행되는 코드에서 `getConfig()` 사용 금지 (환경변수 미설정 시 테스트 실패). `Deno.env.get()` 직접 사용

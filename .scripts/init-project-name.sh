@@ -29,6 +29,6 @@ sed -i '' \
 echo "✅ 프로젝트명: $PROJECT_NAME, Terraform 조직: $TF_ORG"
 echo ""
 echo "다음 단계:"
-echo "  1. infra/.env, infra/.env.staging 생성 (infra/.env.example 참고)"
+echo "  1. infra/.env.staging 생성 (infra/.env.example 참고)"
 echo "  2. Terraform Cloud 워크스페이스 생성: $PROJECT_NAME-staging, $PROJECT_NAME-production"
-echo "  3. .scripts/infra-deploy.sh staging plan"
+echo "  3. .scripts/infra-tf.sh staging plan"

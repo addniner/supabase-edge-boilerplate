@@ -9,9 +9,9 @@ paths:
 
 ```
 infra/
-├── .env                   # 공통 변수 (Supabase token, Org ID, TF Cloud)
-├── .env.staging           # Staging TF_VAR_* + PROJECT_ID
-├── .env.production        # Production TF_VAR_* + PROJECT_ID
+├── .env.example           # 환경변수 템플릿
+├── .env.staging           # Staging 환경 전체 변수
+├── .env.production        # Production 환경 전체 변수
 ├── modules/supabase/      # 재사용 가능한 Supabase 모듈
 └── environments/
     ├── staging/
@@ -21,12 +21,12 @@ infra/
 ## 주요 명령어
 
 ```bash
-.scripts/infra-deploy.sh staging plan
-.scripts/infra-deploy.sh staging apply
-.scripts/setup-github-secrets.sh    # GitHub Secrets 동기화
-.scripts/env-deploy.sh              # Edge Functions secrets 배포
-.scripts/terraform-fmt.sh           # 포맷 적용
-.scripts/terraform-fmt.sh check     # 포맷 검사만 (CI용)
+.scripts/infra-tf.sh staging plan
+.scripts/infra-tf.sh staging apply
+.scripts/infra-github-secrets-sync.sh     # GitHub Secrets 동기화
+.scripts/infra-functions-secrets-sync.sh  # Functions secrets 동기화
+.scripts/infra-tf-fmt.sh                  # 포맷 적용
+.scripts/infra-tf-fmt.sh check            # 포맷 검사만 (CI용)
 ```
 
 ## 작업 원칙

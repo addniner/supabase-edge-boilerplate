@@ -28,10 +28,12 @@ jobs:
           COMMIT_INFO=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/commits/$COMMIT_SHA")
           COMMIT_AUTHOR=$(echo "$COMMIT_INFO" | jq -r '.commit.author.email')
+          COMMIT_MESSAGE=$(echo "$COMMIT_INFO" | jq -r '.commit.message' | head -1)
 
           STATUS="${{ github.event.workflow_run.conclusion }}"
           URL="${{ github.event.workflow_run.html_url }}"
           WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
+          REPO_NAME="${{ github.event.repository.name }}"
 
           # 워크플로우 이름에서 환경 추출
           if echo "$WORKFLOW_NAME" | grep -qi "Production"; then
@@ -42,11 +44,11 @@ jobs:
 
           # 상태에 따라 메시지 설정
           if [ "$STATUS" = "success" ]; then
-            TITLE="🚀 [BACKEND] Deployment $STATUS 🚀"
+            TITLE="🚀 [$REPO_NAME] Deployment $STATUS 🚀"
             STATUS_COLOR="#28a745"
             STATUS_MESSAGE="배포 성공"
           else
-            TITLE="❌ [BACKEND] Deployment $STATUS ❌"
+            TITLE="❌ [$REPO_NAME] Deployment $STATUS ❌"
             STATUS_COLOR="#dc2626"
             STATUS_MESSAGE="배포 실패"
           fi
@@ -58,6 +60,7 @@ jobs:
           echo "author=$COMMIT_AUTHOR" >> $GITHUB_OUTPUT
           echo "url=$URL" >> $GITHUB_OUTPUT
           echo "envName=$ENV_NAME" >> $GITHUB_OUTPUT
+          echo "commitMessage=$COMMIT_MESSAGE" >> $GITHUB_OUTPUT
 
       - name: Notify Google Chat
         env:
@@ -85,30 +88,53 @@ jobs:
                     {
                       "widgets": [
                         {
-                          "decoratedText": {
-                            "text": "<font color=\"${{ steps.commit_info.outputs.statusColor }}\">${{ steps.commit_info.outputs.statusMessage }}</font>"
-                          }
-                        }
-                      ]
-                    },
-                    {
-                      "widgets": [
-                        {
-                          "decoratedText": {
-                            "topLabel": "ENVIRONMENT",
-                            "text": "${{ steps.commit_info.outputs.envName }}"
+                          "columns": {
+                            "columnItems": [
+                              {
+                                "horizontalSizeStyle": "FILL_AVAILABLE_SPACE",
+                                "horizontalAlignment": "START",
+                                "verticalAlignment": "CENTER",
+                                "widgets": [
+                                  {
+                                    "decoratedText": {
+                                      "topLabel": "ENVIRONMENT",
+                                      "text": "${{ steps.commit_info.outputs.envName }}"
+                                    }
+                                  }
+                                ]
+                              },
+                              {
+                                "horizontalSizeStyle": "FILL_AVAILABLE_SPACE",
+                                "horizontalAlignment": "START",
+                                "verticalAlignment": "CENTER",
+                                "widgets": [
+                                  {
+                                    "decoratedText": {
+                                      "topLabel": "STATUS",
+                                      "text": "<font color=\"${{ steps.commit_info.outputs.statusColor }}\">${{ steps.commit_info.outputs.status }}</font>"
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
                           }
                         },
                         {
                           "decoratedText": {
-                            "topLabel": "COMMIT AUTHOR",
+                            "topLabel": "BRANCH",
+                            "text": "${{ github.event.workflow_run.head_branch }}"
+                          }
+                        },
+                        {
+                          "decoratedText": {
+                            "topLabel": "AUTHOR",
                             "text": "${{ steps.commit_info.outputs.author }}"
                           }
                         },
                         {
                           "decoratedText": {
-                            "topLabel": "STATUS",
-                            "text": "<font color=\"${{ steps.commit_info.outputs.statusColor }}\">${{ steps.commit_info.outputs.status }}</font>"
+                            "topLabel": "COMMIT",
+                            "text": "${{ steps.commit_info.outputs.commitMessage }}"
                           }
                         }
                       ]

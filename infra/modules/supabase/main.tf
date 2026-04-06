@@ -66,6 +66,9 @@ resource "supabase_project" "main" {
   # AWS 리전 (데이터가 저장될 물리적 위치)
   region = var.region
 
+  # 인스턴스 크기
+  instance_size = var.instance_size
+
   # lifecycle 블록: 리소스의 생명주기 관리 방식 지정
   lifecycle {
     # ignore_changes: 지정한 속성의 변경사항을 무시 (재생성 방지)

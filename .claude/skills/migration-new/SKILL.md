@@ -1,14 +1,14 @@
 ---
 name: migration-new
-description: 테이블 스키마 변경 마이그레이션. schema.ts 수정 후 pnpm db:generate로 생성. 테이블 CREATE/ALTER/DROP 시 사용.
+description: schema.ts 변경 마이그레이션. 테이블, pgPolicy, index 등 Drizzle이 관리하는 모든 스키마 변경 시 사용. schema.ts 수정 후 pnpm db:generate로 생성.
 ---
 
-# Migration New (테이블 스키마)
+# Migration New (Drizzle 스키마)
 
 ## Instructions
 
 1. `.claude/rules/database/database.md` 규칙 확인
-2. `supabase/functions/api/db/schema.ts` 수정
+2. `supabase/functions/api/infrastructure/db/schema.ts` 수정 (테이블, pgPolicy, index 등)
 3. `pnpm db:generate`
 4. 생성된 SQL 확인
 5. `supabase migration up`

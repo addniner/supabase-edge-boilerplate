@@ -4,14 +4,15 @@
  * Supabase Edge Function (Deno + Hono)
  */
 
-import { createHonoApp, createOpenAPIApp } from "@app/middleware";
+import type { Context } from "@hono";
+import { createApp } from "@middleware";
 import { healthRoute, internalRoute } from "@domains/internal";
 import { swaggerUI } from "@hono/swagger-ui";
 
 // JWT 인증이 필요한 메인 앱 (OpenAPI 지원)
 // Supabase URL 구조: /functions/v1/api/{path}
 // Supabase가 /{함수명}/{경로} 형태로 전달하므로 basePath 필요
-const app = createOpenAPIApp({ authStrategy: "jwt" }).basePath("/api");
+const app = createApp({ authStrategy: "jwt" }).basePath("/api");
 
 // 공개 라우트 (JWT whitelist에 등록됨)
 app.route("/health", healthRoute);
@@ -36,7 +37,7 @@ const OPENAPI_INFO = {
 app.get("/docs", swaggerUI({ url: "/functions/v1/api/docs/openapi.json" }));
 
 // GET /docs/openapi.json - OAS JSON (다운로드 가능)
-app.get("/docs/openapi.json", (c) => {
+app.get("/docs/openapi.json", (c: Context) => {
   const doc = app.getOpenAPIDocument(OPENAPI_INFO);
   return c.json(doc, 200, {
     "Content-Disposition": "attachment; filename=openapi.json",
@@ -44,7 +45,7 @@ app.get("/docs/openapi.json", (c) => {
 });
 
 // 내부 웹훅 인증 앱 (pg_cron 트리거용)
-const internalApp = createHonoApp({ authStrategy: "webhook" }).basePath("/api");
+const internalApp = createApp({ authStrategy: "webhook" }).basePath("/api");
 internalApp.route("/internal", internalRoute);
 
 // Deno Edge Function Handler

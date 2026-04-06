@@ -4,7 +4,14 @@
  */
 
 import { z } from "@zod";
-import { PaginationSchema } from "@shared/validation";
+
+/**
+ * 기본 페이지네이션 스키마
+ */
+const PaginationSchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+});
 
 /**
  * 목록 조회 쿼리 스키마

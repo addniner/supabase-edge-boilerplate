@@ -8,7 +8,7 @@ description: Edge Functions 환경변수 배포. staging/production 환경에 se
 ## Instructions
 
 ```bash
-.scripts/env-deploy.sh
+.scripts/infra-functions-secrets-sync.sh
 ```
 
 환경(staging/production) 선택 프롬프트가 나옴.

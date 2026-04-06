@@ -1,6 +1,6 @@
 ---
 name: migration-custom
-description: RPC 함수, 트리거, moddatetime 등 Drizzle 범위 밖의 커스텀 SQL 마이그레이션. pnpm db:generate:custom으로 생성.
+description: RPC 함수, 트리거 등 schema.ts로 표현할 수 없는 SQL 마이그레이션. pnpm db:generate:custom으로 생성. pgPolicy/index/테이블 변경은 migration-new 사용.
 ---
 
 # Migration Custom (RPC/트리거/확장)

@@ -1,5 +1,8 @@
 {
   "lock": false,
+  "compilerOptions": {
+    "types": ["./edge-runtime.d.ts"]
+  },
   "lint": {
     "rules": {
       "include": [
@@ -16,27 +19,29 @@
     "exclude": ["**/supabase.types.ts"]
   },
   "imports": {
-    "@app": "./app/index.ts",
-    "@app/middleware": "./app/middleware/index.ts",
-    "@app/config": "./app/config/index.ts",
-    "@app/errors": "./app/errors/index.ts",
-    "@app/utils": "./app/utils/index.ts",
+    "@middleware": "./presentation/middleware/index.ts",
+    "@config": "./infrastructure/config/index.ts",
+    "@errors": "./presentation/errors/index.ts",
 
-    "@clients": "./clients/index.ts",
-    "@db": "./db/index.ts",
+    "@domain": "./domain/value-objects/index.ts",
+    "@domain/exceptions": "./domain/exceptions/index.ts",
+    "@domain/gateways": "./domain/gateways/index.ts",
+    "@domain/repositories": "./domain/repositories/index.ts",
+
+    "@logger": "./infrastructure/logger/index.ts",
+
+    "@clients": "./infrastructure/clients/index.ts",
+    "@factories": "./infrastructure/factories/index.ts",
+    "@repositories": "./infrastructure/repositories/index.ts",
+    "@db": "./infrastructure/db/index.ts",
+
+    "@routes": "./presentation/routes/index.ts",
 
     "@domains/_example": "./domains/_example/index.ts",
     "@domains/internal": "./domains/internal/index.ts",
-    "@domains/users": "./domains/users/index.ts",
-
-    "@shared/types": "./shared/types/index.ts",
-    "@shared/enums": "./shared/enums/index.ts",
-    "@shared/interfaces": "./shared/interfaces/index.ts",
-    "@shared/validation": "./shared/validation/index.ts",
-
-    "@test": "./__tests__/index.ts",
-    "@test/setup": "./__tests__/setup.ts",
-    "@test/fixtures": "./__tests__/fixtures.ts",
+    "@openapi": "./presentation/utils/openapi.ts",
+    "@test/env": "./__tests__/env.ts",
+    "@hono/http-status": "npm:hono@~4.7.0/utils/http-status",
 
     "@edge-runtime": "jsr:@supabase/functions-js/edge-runtime.d.ts",
     "@supabase-js": "jsr:@supabase/supabase-js@2",

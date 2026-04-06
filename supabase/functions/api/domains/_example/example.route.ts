@@ -3,25 +3,61 @@
  * HTTP 요청/응답만 처리
  */
 
-import { Hono } from "@hono";
-import type { Context } from "@app";
-import { Response, zValidator, getValidated } from "@app/middleware";
-import { NotFoundError } from "@app/errors";
+import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
+import { Response } from "@middleware";
+import { NotFoundError } from "@errors";
+import { oas } from "@openapi";
 import { ExampleService } from "./example.service.ts";
 import {
   CreateExampleSchema,
   type CreateExampleInput,
 } from "./example.schema.ts";
 
-const exampleRoute = new Hono();
+const exampleRoute = new OpenAPIHono();
 const exampleService = new ExampleService();
+
+// ============================================
+// Route Definitions
+// ============================================
+
+const ExampleResponseSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  createdAt: z.string().datetime(),
+});
+
+const getExampleRoute = createRoute({
+  method: "get",
+  path: "/:id",
+  tags: ["Example"],
+  summary: "단일 조회",
+  request: {
+    ...oas.params(z.object({ id: z.string() })),
+  },
+  responses: oas.ok(ExampleResponseSchema),
+});
+
+const createExampleRoute = createRoute({
+  method: "post",
+  path: "/",
+  tags: ["Example"],
+  summary: "생성",
+  request: {
+    ...oas.jsonBody(CreateExampleSchema),
+  },
+  responses: oas.created(ExampleResponseSchema),
+});
+
+// ============================================
+// Route Handlers
+// ============================================
 
 /**
  * GET /example/:id
  * 단일 조회
  */
-exampleRoute.get("/:id", async (c: Context) => {
-  const id = c.req.param("id");
+exampleRoute.openapi(getExampleRoute, async (c) => {
+  const { id } = c.req.valid("param");
   const result = await exampleService.getExample(id);
 
   if (!result) {
@@ -35,15 +71,11 @@ exampleRoute.get("/:id", async (c: Context) => {
  * POST /example
  * 생성
  */
-exampleRoute.post(
-  "/",
-  zValidator("json", CreateExampleSchema),
-  async (c: Context) => {
-    const input = getValidated<CreateExampleInput>(c);
-    const result = await exampleService.createExample(input);
+exampleRoute.openapi(createExampleRoute, async (c) => {
+  const input = c.req.valid("json") as CreateExampleInput;
+  const result = await exampleService.createExample(input);
 
-    return Response.created(c, result.example);
-  },
-);
+  return Response.created(c, result.example);
+});
 
 export { exampleRoute };

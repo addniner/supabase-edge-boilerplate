@@ -14,7 +14,7 @@ const databaseUrl = process.env.DATABASE_URL!.replace(
 
 export default defineConfig({
   dialect: "postgresql",
-  schema: "./supabase/functions/api/db/schema.ts",
+  schema: "./supabase/functions/api/infrastructure/db/schema.ts",
   out: "./supabase/migrations",
   dbCredentials: {
     url: databaseUrl,

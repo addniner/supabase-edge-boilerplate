@@ -1,4 +1,6 @@
 #!/bin/bash
+# Edge Functions 로컬 서버 시작
+# 사용법: .scripts/serve.sh [-i|--inspect|-ib|--inspect-brk]
 
 INSPECT_FLAG=""
 if [[ "$1" == "-i" || "$1" == "--inspect" ]]; then
