@@ -81,7 +81,7 @@ async function enrichWithRbac(c: Context, next: Next) {
     } else {
       // 역할이 있는 경우 - 권한 조회
       role = dbRole;
-      permissions = await userRoleRepo.getRolePermissions(role);
+      permissions = await userRoleRepo.getRolePermissions(dbRole);
 
       Logger.debug(
         `User ${userId} role: ${role} (from DB), permissions: ${permissions.length}`,
