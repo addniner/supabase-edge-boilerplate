@@ -57,9 +57,6 @@ supabase/functions/api/
 │   ├── repositories/      # DB 접근 (BaseRepository 확장)
 │   └── utils/             # ngrok, public-storage-url, image, performance
 │
-├── domains/               # Legacy domain modules (마이그레이션 대상)
-│   └── _example/          # Reference implementation
-│
 └── __tests__/             # Test setup (env.ts)
 ```
 
@@ -78,6 +75,7 @@ import type { MyGateway } from "@domain/gateways";
 import type { MyRepository } from "@domain/repositories";
 import { MyRepositoryImpl } from "@repositories";
 import { MyGatewayFactory } from "@factories";
+import { DoSomethingUseCase } from "@usecases/my-feature";
 ```
 
 Never use relative paths across layer boundaries. Always register new aliases in `deno.json` imports.
@@ -92,7 +90,7 @@ presentation → application → domain ← infrastructure
 
 - **domain**: 순수 비즈니스 규칙 + 타입. `import type` from `@db`만 허용 (엔티티 타입). gateway/repository 인터페이스 정의
 - **application**: domain + infrastructure import (생성자 기본값 DI). 예외는 `@domain/exceptions`에서 import
-- **presentation**: application(usecase) + domain import. infrastructure 직접 참조 금지
+- **presentation**: application(usecase) + domain import. infrastructure 직접 참조 금지 (예외: middleware에서 `@config`, `@clients`, `@repositories` 접근은 허용)
 - **infrastructure**: domain import 가능. repository/client 구현체는 domain 인터페이스를 implements
 
 ## Route Pattern (OpenAPI)

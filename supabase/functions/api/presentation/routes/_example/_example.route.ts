@@ -1,30 +1,24 @@
 /**
  * Example Routes
- * HTTP 요청/응답만 처리
+ * HTTP 요청/응답만 처리 — 비즈니스 로직은 usecase에 위임
  */
 
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
+import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import { Response } from "@middleware";
 import { NotFoundError } from "@errors";
 import { oas } from "@openapi";
-import { ExampleService } from "./example.service.ts";
-import {
-  CreateExampleSchema,
-  type CreateExampleInput,
-} from "./example.schema.ts";
+import { GetExampleUseCase, CreateExampleUseCase } from "@usecases/_example";
+import { ExampleResponseSchema, CreateExampleSchema } from "./_example.schema.ts";
 
 const exampleRoute = new OpenAPIHono();
-const exampleService = new ExampleService();
+const getExampleUseCase = new GetExampleUseCase();
+const createExampleUseCase = new CreateExampleUseCase();
 
 // ============================================
 // Route Definitions
 // ============================================
 
-const ExampleResponseSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  createdAt: z.string().datetime(),
-});
+import { z } from "@hono/zod-openapi";
 
 const getExampleRoute = createRoute({
   method: "get",
@@ -52,30 +46,22 @@ const createExampleRoute = createRoute({
 // Route Handlers
 // ============================================
 
-/**
- * GET /example/:id
- * 단일 조회
- */
 exampleRoute.openapi(getExampleRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const result = await exampleService.getExample(id);
+  const result = await getExampleUseCase.execute({ id });
 
   if (!result) {
     throw new NotFoundError("Example을 찾을 수 없습니다");
   }
 
-  return Response.ok(c, result.example);
+  return Response.ok(c, result);
 });
 
-/**
- * POST /example
- * 생성
- */
 exampleRoute.openapi(createExampleRoute, async (c) => {
-  const input = c.req.valid("json") as CreateExampleInput;
-  const result = await exampleService.createExample(input);
+  const input = c.req.valid("json");
+  const result = await createExampleUseCase.execute(input);
 
-  return Response.created(c, result.example);
+  return Response.created(c, result);
 });
 
 export { exampleRoute };

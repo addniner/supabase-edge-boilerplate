@@ -6,7 +6,7 @@
 
 import type { Context } from "@hono";
 import { createApp } from "@middleware";
-import { healthRoute, internalRoute } from "@domains/internal";
+import { healthRoute, internalRoute } from "@routes";
 import { swaggerUI } from "@hono/swagger-ui";
 
 // JWT 인증이 필요한 메인 앱 (OpenAPI 지원)
@@ -18,7 +18,7 @@ const app = createApp({ authStrategy: "jwt" }).basePath("/api");
 app.route("/health", healthRoute);
 
 // 인증 필요 라우트
-// app.route("/your-resource", yourResourceRoute);
+// app.route("/example", exampleRoute);
 
 // OpenAPI 문서 엔드포인트 (로컬 전용)
 const OPENAPI_INFO = {

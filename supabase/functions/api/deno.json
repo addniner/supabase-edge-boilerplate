@@ -37,8 +37,7 @@
 
     "@routes": "./presentation/routes/index.ts",
 
-    "@domains/_example": "./domains/_example/index.ts",
-    "@domains/internal": "./domains/internal/index.ts",
+    "@usecases/_example": "./application/usecases/_example/index.ts",
     "@openapi": "./presentation/utils/openapi.ts",
     "@test/env": "./__tests__/env.ts",
     "@hono/http-status": "npm:hono@~4.7.0/utils/http-status",
