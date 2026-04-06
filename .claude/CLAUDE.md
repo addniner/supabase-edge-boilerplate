@@ -88,7 +88,7 @@ presentation → application → domain ← infrastructure
               infrastructure (usecase에서 client/repo 직접 import — 생성자 기본값 DI)
 ```
 
-- **domain**: 순수 비즈니스 규칙 + 타입. `import type` from `@db`만 허용 (엔티티 타입). gateway/repository 인터페이스 정의
+- **domain**: 순수 비즈니스 규칙 + 타입. `import type` from `@db`만 허용 (엔티티 타입, ADR-001). gateway/repository 인터페이스 정의
 - **application**: domain + infrastructure import (생성자 기본값 DI). 예외는 `@domain/exceptions`에서 import
 - **presentation**: application(usecase) + domain import. infrastructure 직접 참조 금지 (예외: middleware에서 `@config`, `@clients`, `@repositories` 접근은 허용)
 - **infrastructure**: domain import 가능. repository/client 구현체는 domain 인터페이스를 implements
@@ -140,6 +140,8 @@ export class DoSomethingUseCase {
 - 여러 repository/client를 자유롭게 조합 가능
 - DI 패턴: 생성자 기본값 (프로덕션), mock 주입 (테스트)
 - gateway factory DI: `private gatewayFactory: typeof createMyGateway = createMyGateway`
+- gateway factory 함수 DI: `private gatewaysFactory: (apiKeys: ApiKeys) => Gateway[] = createGateways` — route에서 API keys만 전달, usecase 내부에서 gateway 생성
+- 함수 DI (과도기): `private chatCompletion: typeof createChatCompletion = createChatCompletion` — gateway 클래스 미전환 시 임시 사용
 - 테스트 파일 동위치: `*.usecase.test.ts`
 
 상세는 [usecases.md](.claude/rules/layers/usecases.md) 참고.
@@ -159,7 +161,7 @@ export class MyRepositoryImpl extends BaseRepository implements MyRepository {
   }
 }
 
-// infrastructure/db/schema.ts — 엔티티 타입
+// infrastructure/db/schema.ts — 엔티티 타입 (ADR-001: 여기에 유지)
 export type MyEntity = typeof myTable.$inferSelect;
 export type NewMyEntity = typeof myTable.$inferInsert;
 ```
@@ -230,7 +232,7 @@ Path-specific rules are auto-loaded in `.claude/rules/`:
 ## Reference Docs
 
 프로젝트 관련 문서는 `docs/` 폴더를 참고:
-- `docs/project/` — 프로젝트 자체 문서 (개발, 인프라, RBAC, Drizzle 등)
+- `docs/project/` — 프로젝트 자체 문서 (개발, 인프라, RBAC, Drizzle, 아키텍처 ADR 등)
 - `docs/learn/` — 외부 라이브러리 참조 문서 (Hono, Drizzle, Terraform 등)
 
 ## Feature Request Workflow
