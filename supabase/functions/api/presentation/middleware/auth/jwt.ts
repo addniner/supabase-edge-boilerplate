@@ -94,21 +94,24 @@ function setUserToContext(
 }
 
 /**
- * 인증 핸들러
- * - JWT 토큰 추출 및 검증
- * - Context에 사용자 정보 저장 (custom claims 포함)
+ * 테스트 가능한 인증 핸들러 생성
+ * @param clientFactory - Supabase client 생성 함수 (테스트 시 mock 주입)
  */
-async function authenticate(c: Context, next: Next) {
-  const token = extractToken(c);
-  const supabase = createAuthSupabaseClient(token);
-  const user = await validateUserToken(supabase, token);
+export function createAuthenticateHandler(
+  clientFactory: typeof createAuthSupabaseClient = createAuthSupabaseClient,
+) {
+  return async (c: Context, next: Next) => {
+    const token = extractToken(c);
+    const supabase = clientFactory(token);
+    const user = await validateUserToken(supabase, token);
 
-  // JWT 페이로드 디코드 (custom claims 추출)
-  const jwtPayload = decodeJwtPayload(token);
+    // JWT 페이로드 디코드 (custom claims 추출)
+    const jwtPayload = decodeJwtPayload(token);
 
-  setUserToContext(c, user, jwtPayload);
+    setUserToContext(c, user, jwtPayload);
 
-  return await next();
+    return await next();
+  };
 }
 
 /**
@@ -116,4 +119,4 @@ async function authenticate(c: Context, next: Next) {
  * - PUBLIC_ROUTES에 정의된 경로는 인증 없이 접근 가능
  * - 그 외 모든 경로는 인증 필요
  */
-export const authJwtMiddleware = except(WHITE_LISTED_ROUTES, authenticate);
+export const authJwtMiddleware = except(WHITE_LISTED_ROUTES, createAuthenticateHandler());
