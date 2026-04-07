@@ -1,4 +1,4 @@
-# MacOS
+### macOS ###
 .DS_Store
 
 ### VisualStudioCode ###
@@ -12,33 +12,16 @@
 # Environment variables
 .env*
 !.env.example
-*.secret
-
-node_modules
-
+!.env.*.example
 
 # Cursor
 .cursor
 
 # Claude
-.claude/settings.json
-.claude/settings.local.json
-
-# MCP
 .mcp.json
 
-
-# Supabase
-supabase/.temp
-supabase/.branches
-
-_coverage
-
-# Storage (keep only .gitkeep)
-supabase/storage/**
-!supabase/storage/**/
-!supabase/storage/**/.gitkeep
-
+# Code Guides
+.docs
 
 # Terraform
 infra/**/.terraform/*
@@ -47,4 +30,17 @@ infra/**/*.tfstate.*
 infra/**/*.tfvars
 infra/**/*.tfplan
 
-.docs
+# Temp
+temp/
+
+node_modules
+
+# Supabase
+supabase/.temp
+supabase/.branches
+supabase/functions/api/_coverage
+
+# Storage (keep only .gitkeep)
+supabase/storage/**
+!supabase/storage/**/
+!supabase/storage/**/.gitkeep
