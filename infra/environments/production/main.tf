@@ -65,7 +65,7 @@ module "supabase" {
 
   # 인증 설정 (프로덕션 환경 - 모든 인증 방식 활성화)
   # staging과 달리 phone, apple도 활성화 (실제 서비스용)
-  site_url                  = var.site_url                  # 실제 프로덕션 도메인 (예: https://your-domain.com)
+  site_url                  = "https://your-domain.com"     # ⚠️ 실제 프로덕션 도메인으로 변경
   external_email_enabled    = true                          # 이메일 로그인 활성화
   external_phone_enabled    = true                          # 전화번호 로그인 활성화 (SMS 제공자 설정 필요)
   external_google_enabled   = true                          # Google OAuth 활성화 (OAuth 클라이언트 설정 필요)

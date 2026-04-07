@@ -80,7 +80,7 @@ module "supabase" {
   max_rows             = 1000                # API 응답 최대 행 수
 
   # 인증 설정 (스테이징 환경)
-  site_url                  = var.site_url                  # 스테이징 도메인
+  site_url                  = "https://your-domain.com"     # ⚠️ 실제 스테이징 도메인으로 변경
   external_email_enabled    = true                          # 이메일 로그인 활성화
   external_phone_enabled    = false                         # 전화번호 로그인 비활성화 (스테이징 환경에서는 불필요)
   external_google_enabled   = true                          # Google OAuth 활성화
