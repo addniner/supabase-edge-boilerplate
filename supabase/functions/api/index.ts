@@ -4,10 +4,8 @@
  * Supabase Edge Function (Deno + Hono)
  */
 
-import type { Context } from "@hono";
 import { createApp } from "@middleware";
-import { healthRoute, internalRoute } from "@routes";
-import { swaggerUI } from "@hono/swagger-ui";
+import { createDocsRoute, healthRoute, internalRoute } from "@routes";
 
 // JWT 인증이 필요한 메인 앱 (OpenAPI 지원)
 // Supabase URL 구조: /functions/v1/api/{path}
@@ -20,29 +18,8 @@ app.route("/health", healthRoute);
 // 인증 필요 라우트
 // app.route("/example", exampleRoute);
 
-// OpenAPI 문서 엔드포인트 (로컬 전용)
-const OPENAPI_INFO = {
-  openapi: "3.0.0" as const,
-  info: {
-    title: "Backend API",
-    version: "1.0.0",
-    description: "Supabase Edge Function Backend API",
-  },
-  servers: [
-    { url: "http://127.0.0.1:54321/functions/v1", description: "Local" },
-  ],
-};
-
-// GET /docs - Swagger UI
-app.get("/docs", swaggerUI({ url: "/functions/v1/api/docs/openapi.json" }));
-
-// GET /docs/openapi.json - OAS JSON (다운로드 가능)
-app.get("/docs/openapi.json", (c: Context) => {
-  const doc = app.getOpenAPIDocument(OPENAPI_INFO);
-  return c.json(doc, 200, {
-    "Content-Disposition": "attachment; filename=openapi.json",
-  });
-});
+// OpenAPI docs (모든 라우트 등록 후 마지막에 설정)
+app.route("/docs", createDocsRoute(app));
 
 // 내부 웹훅 인증 앱 (pg_cron 트리거용)
 const internalApp = createApp({ authStrategy: "webhook" }).basePath("/api");
