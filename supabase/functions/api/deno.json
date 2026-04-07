@@ -38,9 +38,9 @@
     "@routes": "./presentation/routes/index.ts",
 
     "@usecases/_example": "./application/usecases/_example/index.ts",
+
     "@openapi": "./presentation/utils/openapi.ts",
     "@test/env": "./__tests__/env.ts",
-    "@hono/http-status": "npm:hono@~4.7.0/utils/http-status",
 
     "@edge-runtime": "jsr:@supabase/functions-js/edge-runtime.d.ts",
     "@supabase-js": "jsr:@supabase/supabase-js@2",
@@ -51,6 +51,7 @@
     "@hono": "npm:hono@~4.7.0",
     "@hono/combine": "npm:hono@~4.7.0/combine",
     "@hono/language": "npm:hono@~4.7.0/language",
+    "@hono/http-status": "npm:hono@~4.7.0/utils/http-status",
     "@hono/zod-openapi": "npm:@hono/zod-openapi@~0.18.0",
     "@hono/swagger-ui": "npm:@hono/swagger-ui@~0.5.0",
     "@zod": "npm:zod@~3.23.0",
