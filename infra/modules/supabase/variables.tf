@@ -178,4 +178,3 @@ variable "hook_custom_access_token_uri" {
   type        = string
   default     = "pg-functions://postgres/public/custom_access_token_hook"
 }
-
