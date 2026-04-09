@@ -41,6 +41,7 @@
 
     "@openapi": "./presentation/utils/openapi.ts",
     "@test/env": "./__tests__/env.ts",
+    "@test/setup": "./__tests__/setup.ts",
 
     "@edge-runtime": "jsr:@supabase/functions-js/edge-runtime.d.ts",
     "@supabase-js": "jsr:@supabase/supabase-js@2",

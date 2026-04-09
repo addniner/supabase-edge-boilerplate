@@ -5,7 +5,7 @@ import type {
   SupabaseCreateSignedUrlData,
   UploadFileInfo,
 } from "./supabase-storage.types.ts";
-import { InternalServerError } from "@errors";
+import { InternalServerError } from "@domain/exceptions";
 import { isLocal } from "@config";
 import { Logger } from "@logger";
 import { replaceKongWithNgrok } from "../utils/ngrok.ts";

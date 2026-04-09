@@ -1,7 +1,7 @@
 import { assertEquals } from "@std/assert";
 import { beforeAll, describe, it } from "@std/testing/bdd";
 import { resetConfigCache } from "@config";
-import { setupTestEnv, TEST_STORAGE_CONFIG } from "@test/env";
+import { setupTestEnv, TEST_STORAGE_CONFIG } from "@test/setup";
 import { PublicStorageUrl } from "./public-storage-url.ts";
 
 beforeAll(() => {

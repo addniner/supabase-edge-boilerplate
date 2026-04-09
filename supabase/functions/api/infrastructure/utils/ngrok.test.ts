@@ -4,7 +4,7 @@ import { assertEquals } from "@std/assert";
 import { resetConfigCache } from "@config";
 import { replaceKongWithNgrok } from "./ngrok.ts";
 
-// ─── Helper ───────────────────────────────────────────────────────────────────
+// --- Helper ------------------------------------------------------------------─
 
 function withNgrokEnv(ngrokUrl: string | undefined, fn: () => void): void {
   const original = Deno.env.get("NGROK_URL");
@@ -26,16 +26,16 @@ function withNgrokEnv(ngrokUrl: string | undefined, fn: () => void): void {
   }
 }
 
-// ─── Tests ────────────────────────────────────────────────────────────────────
+// --- Tests ------------------------------------------------------------------──
 
-Deno.test("replaceKongWithNgrok - null 입력 → null 반환", () => {
+Deno.test("replaceKongWithNgrok - null 입력 -> null 반환", () => {
   withNgrokEnv(undefined, () => {
     const result = replaceKongWithNgrok(null);
     assertEquals(result, null);
   });
 });
 
-Deno.test("replaceKongWithNgrok - NGROK_URL 미설정 → 원본 URL 반환", () => {
+Deno.test("replaceKongWithNgrok - NGROK_URL 미설정 -> 원본 URL 반환", () => {
   withNgrokEnv(undefined, () => {
     const url = "http://kong:8000/functions/v1/api/test";
     const result = replaceKongWithNgrok(url);
@@ -43,7 +43,7 @@ Deno.test("replaceKongWithNgrok - NGROK_URL 미설정 → 원본 URL 반환", ()
   });
 });
 
-Deno.test("replaceKongWithNgrok - NGROK_URL 설정 시 → kong:8000을 ngrok host로 치환", () => {
+Deno.test("replaceKongWithNgrok - NGROK_URL 설정 시 -> kong:8000을 ngrok host로 치환", () => {
   withNgrokEnv("https://abc123.ngrok.io", () => {
     const url = "http://kong:8000/functions/v1/api/test";
     const result = replaceKongWithNgrok(url);
@@ -51,7 +51,7 @@ Deno.test("replaceKongWithNgrok - NGROK_URL 설정 시 → kong:8000을 ngrok ho
   });
 });
 
-Deno.test("replaceKongWithNgrok - kong:8000이 없는 URL → 원본 그대로 반환", () => {
+Deno.test("replaceKongWithNgrok - kong:8000이 없는 URL -> 원본 그대로 반환", () => {
   withNgrokEnv("https://abc123.ngrok.io", () => {
     const url = "https://test.supabase.co/functions/v1/api/test";
     const result = replaceKongWithNgrok(url);
