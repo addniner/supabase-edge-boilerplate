@@ -1,4 +1,4 @@
-import "@test/env";
+import "@test";
 import { assertEquals, assertInstanceOf } from "@std/assert";
 import { decodeBase64ToBinary, extractImageDimensions } from "./image.ts";
 

@@ -1,4 +1,4 @@
-import "@test/env";
+import "@test";
 
 import { assertEquals, assertRejects } from "@std/assert";
 import { measureTime } from "./performance.ts";

@@ -1,9 +1,9 @@
-import "@test/env";
+import "@test";
 
 import { assertEquals } from "@std/assert";
 import { Logger } from "./logger.ts";
 
-// --- Tests ------------------------------------------------------------------──
+// --- Tests --------------------------------------------------------------------
 
 Deno.test("Logger - setMinLevel/getMinLevel: 레벨 설정 및 조회", () => {
   const original = Logger.getMinLevel();

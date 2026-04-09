@@ -1,10 +1,10 @@
-import "@test/env";
+import "@test";
 
 import { assertEquals } from "@std/assert";
 import { resetConfigCache } from "@config";
 import { replaceKongWithNgrok } from "./ngrok.ts";
 
-// --- Helper ------------------------------------------------------------------─
+// --- Helper ------------------------------------------------------------------
 
 function withNgrokEnv(ngrokUrl: string | undefined, fn: () => void): void {
   const original = Deno.env.get("NGROK_URL");
@@ -26,7 +26,7 @@ function withNgrokEnv(ngrokUrl: string | undefined, fn: () => void): void {
   }
 }
 
-// --- Tests ------------------------------------------------------------------──
+// --- Tests -------------------------------------------------------------------
 
 Deno.test("replaceKongWithNgrok - null 입력 -> null 반환", () => {
   withNgrokEnv(undefined, () => {

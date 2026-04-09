@@ -1,4 +1,4 @@
-import "@test/env";
+import "@test";
 
 import { assertEquals } from "@std/assert";
 import { Hono } from "@hono";
