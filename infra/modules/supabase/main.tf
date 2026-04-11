@@ -75,13 +75,8 @@ resource "supabase_project" "main" {
     ignore_changes = [
       database_password, # 비밀번호는 최초 생성 후 변경사항 무시
       organization_id,   # 프로젝트 생성 후 변경 불가 (프로바이더 제약)
+      instance_size,     # 인스턴스 크기 변경은 대시보드에서 직접 관리
     ]
-    # 이유: 보안상 비밀번호는 생성 후 Supabase 대시보드에서 직접 관리
-    # Terraform으로 비밀번호를 변경하면 기존 연결이 끊어질 수 있음
-
-    # 다른 lifecycle 옵션:
-    # create_before_destroy = true  → 새 리소스 생성 후 기존 리소스 삭제
-    # prevent_destroy = true        → 실수로 삭제되는 것 방지
   }
 }
 
