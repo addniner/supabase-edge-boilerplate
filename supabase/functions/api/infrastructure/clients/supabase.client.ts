@@ -69,10 +69,3 @@ export function getPublicClient(): SupabaseClient {
 
   return publicClientCache;
 }
-
-/**
- * @deprecated Use getPublicClient() instead
- */
-export function createPublicSupabaseClient() {
-  return getPublicClient();
-}

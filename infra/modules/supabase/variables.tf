@@ -112,7 +112,7 @@ variable "uri_allow_list" {
   type        = string
   default     = ""
   # 인증 후 리다이렉트가 허용되는 추가 URL 목록 (콤마 구분 문자열)
-  # 예: "myapp://auth/callback,https://your-domain.com/callback"
+  # 예: "lever-studio://auth/callback,https://your-domain.com/callback"
 }
 
 variable "external_email_enabled" {
@@ -161,6 +161,16 @@ variable "external_google_secret" {
   default     = ""
   sensitive   = true
   # Google Cloud Console에서 OAuth 클라이언트 생성 시 발급되는 시크릿
+}
+
+# -----------------------------------------------------------------------------
+# Storage 설정 변수
+# -----------------------------------------------------------------------------
+
+variable "storage_file_size_limit" {
+  description = "Global file size limit in bytes (default: 200MB)"
+  type        = number
+  default     = 209715200
 }
 
 # -----------------------------------------------------------------------------
