@@ -23,5 +23,6 @@ export const WHITE_LISTED_ROUTES: string[] = [
   "/api/public", // 공개 경로 (정확한 매칭)
   "/api/public/*", // 공개 경로의 모든 하위 경로
   "/api/health", // 헬스체크 (인증 불필요)
+  "/api/health/*", // 헬스체크 하위 경로
   ...docsRoutes, // Swagger UI (프로덕션 제외)
 ];
