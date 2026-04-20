@@ -17,12 +17,15 @@
     "db:studio": "drizzle-kit studio",
     "db:studio:local": "ENV=local drizzle-kit studio",
     "db:studio:staging": "ENV=staging drizzle-kit studio",
-    "db:studio:production": "ENV=production drizzle-kit studio"
+    "db:studio:production": "ENV=production drizzle-kit studio",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@types/node": "^25.5.0",
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.8",
     "drizzle-orm": "^0.45.1",
+    "husky": "^9.1.7",
     "postgres": "^3.4.8"
   }
 }

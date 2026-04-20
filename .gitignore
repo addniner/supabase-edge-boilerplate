@@ -9,6 +9,9 @@
 !.vscode/extensions.json
 !.vscode/*.code-snippets
 
+# Node.js
+node_modules
+
 # Environment variables
 .env*
 !.env.example
@@ -19,7 +22,6 @@
 .cursor
 
 # Claude
-.claude/settings.local.json
 .mcp.json
 
 # Code Guides
@@ -34,8 +36,6 @@ infra/**/*.tfplan
 
 # Temp
 temp/
-
-node_modules
 
 # Supabase
 supabase/.temp
