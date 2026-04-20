@@ -156,7 +156,7 @@ function permissionMatches(
  * 특정 권한을 요구하는 미들웨어 생성
  *
  * @example
- * app.delete("/:id", requirePermission(Permission.RESOURCES_DELETE), async (c) => {
+ * app.delete("/:id", requirePermission(Permission.PROJECTS_DELETE), async (c) => {
  *   // 권한이 있는 경우에만 실행됨
  * });
  */
@@ -204,7 +204,7 @@ export function requirePermission(permission: Permission) {
  * 여러 권한 중 하나라도 있으면 허용
  *
  * @example
- * app.post("/upload", requireAnyPermission([Permission.RESOURCES_CREATE, Permission.ALL]), async (c) => {
+ * app.post("/upload", requireAnyPermission([Permission.IMAGES_GENERATE, Permission.ALL]), async (c) => {
  *   // 둘 중 하나라도 있으면 실행
  * });
  */
@@ -254,7 +254,7 @@ export function requireAnyPermission(requiredPermissions: Permission[]) {
  * 모든 권한이 필요한 경우
  *
  * @example
- * app.post("/dangerous", requireAllPermissions([Permission.RESOURCES_DELETE, Permission.ALL]), async (c) => {
+ * app.post("/dangerous", requireAllPermissions([Permission.PROJECTS_DELETE, Permission.ALL]), async (c) => {
  *   // 모든 권한이 있어야 실행
  * });
  */

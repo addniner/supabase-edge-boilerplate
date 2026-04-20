@@ -1,10 +1,9 @@
-import "@test/env";
-
 import { assertEquals } from "@std/assert";
 import { resetConfigCache } from "@config";
-import { TEST_STORAGE_CONFIG } from "@test/env";
+import { setupTestEnv, TEST_STORAGE_CONFIG } from "@test/env";
 import { PublicStorageUrl } from "./public-storage-url.ts";
 
+setupTestEnv();
 resetConfigCache();
 
 // --- PublicStorageUrl.bucket() -----------------------------------------------

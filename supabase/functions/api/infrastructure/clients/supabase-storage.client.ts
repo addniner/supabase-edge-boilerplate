@@ -13,7 +13,7 @@ import type {
 import { InternalServerError } from "@domain/exceptions";
 import { isLocal } from "@config";
 import { Logger } from "@logger";
-import { replaceKongWithNgrok } from "../utils/ngrok.ts";
+import { replaceKongWithNgrok } from "@infrastructure/utils";
 
 interface SupabaseStorageClientProps {
   bucketName: string;
@@ -30,9 +30,6 @@ export class SupabaseStorageClient {
       60 * 15;
   }
 
-  /**
-   * 업로드 Presigned URLs 생성 (배치)
-   */
   async createSignedUploadUrls(
     files: UploadFileInfo[],
   ): Promise<SignedUploadUrlData[]> {
@@ -71,9 +68,6 @@ export class SupabaseStorageClient {
     return results;
   }
 
-  /**
-   * 다운로드 Presigned URLs 생성 (배치)
-   */
   async createSignedDownloadUrls(
     paths: string[],
     timeoutSec?: number,
@@ -99,8 +93,9 @@ export class SupabaseStorageClient {
       );
     }
 
-    // supabase-js 는 error 아이템의 signedUrl 을 null 로 내려준다.
-    // 도메인 타입은 string 을 요구하므로 null → "" 로 normalize.
+    // supabase-js 는 error 아이템의 signedUrl 을 null 로 내려준다. 도메인 타입은
+    // string 을 요구하므로 null → "" 로 normalize — downstream 은 이미
+    // falsy 체크로 에러 아이템을 거르고 있어 시맨틱 동일.
     if (isLocal()) {
       return data.map((item) => ({
         ...item,
@@ -111,10 +106,6 @@ export class SupabaseStorageClient {
     return data.map((item) => ({ ...item, signedUrl: item.signedUrl ?? "" }));
   }
 
-  /**
-   * 이미지 변환 옵션과 함께 다운로드 Presigned URLs 생성
-   * createSignedUrl을 개별 호출하므로 배치보다 느림 (Pro Plan 필요)
-   */
   async createSignedDownloadUrlsWithTransform(
     paths: string[],
     transform: {
@@ -155,9 +146,6 @@ export class SupabaseStorageClient {
     return results;
   }
 
-  /**
-   * Base64 또는 바이너리 데이터를 스토리지에 업로드
-   */
   async uploadBase64(
     data: string | Uint8Array,
     path: string,
@@ -197,9 +185,6 @@ export class SupabaseStorageClient {
     return signedUrls[0].signedUrl;
   }
 
-  /**
-   * 파일 업로드 (contentType 지정 가능)
-   */
   async uploadFile(
     binaryData: Uint8Array | ArrayBuffer,
     path: string,
@@ -227,9 +212,6 @@ export class SupabaseStorageClient {
     return uploadResult.path;
   }
 
-  /**
-   * 파일명 sanitization
-   */
   sanitizeFileName(fileName: string): string {
     return fileName
       .replace(/[\/\\]/g, "_")
