@@ -22,6 +22,10 @@ export interface DatabaseConfig {
 
 export type DeployEnvironment = "local" | "development" | "production";
 
+export interface SecurityConfig {
+  ENCRYPTION_KEY: string;
+}
+
 export interface DevConfig {
   NGROK_URL?: string;
 }
@@ -30,6 +34,7 @@ export interface AppConfig {
   supabase: SupabaseConfig;
   storage: StorageConfig;
   database: DatabaseConfig;
+  security: SecurityConfig;
   dev: DevConfig;
   environment: DeployEnvironment;
 }

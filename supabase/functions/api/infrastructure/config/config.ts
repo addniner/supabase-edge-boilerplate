@@ -11,6 +11,7 @@ import type {
   DatabaseConfig,
   DeployEnvironment,
   DevConfig,
+  SecurityConfig,
   StorageConfig,
   SupabaseConfig,
 } from "./config.types.ts";
@@ -73,6 +74,15 @@ function loadDatabaseConfig(): DatabaseConfig {
 }
 
 /**
+ * 보안 환경 변수 로드
+ */
+function loadSecurityConfig(): SecurityConfig {
+  return {
+    ENCRYPTION_KEY: getEnv("ENCRYPTION_KEY"),
+  };
+}
+
+/**
  * 개발 환경 변수 로드 (로컬 개발용)
  */
 function loadDevConfig(): DevConfig {
@@ -111,6 +121,7 @@ function loadConfig(): AppConfig {
     supabase: loadSupabaseConfig(),
     storage: loadStorageConfig(),
     database: loadDatabaseConfig(),
+    security: loadSecurityConfig(),
     dev: loadDevConfig(),
     environment: detectEnvironment(),
   };
@@ -151,4 +162,18 @@ export function isDevelopment(): boolean {
 
 export function isProduction(): boolean {
   return getConfig().environment === "production";
+}
+
+/**
+ * 웹훅 URL 조합 헬퍼
+ * 로컬: ngrok URL 사용 (설정된 경우), 원격: SUPABASE_URL 사용
+ *
+ * @example getWebhookUrl("/functions/v1/api/webhooks/portone")
+ */
+export function getWebhookUrl(path: string): string {
+  const config = getConfig();
+  if (isLocal() && config.dev.NGROK_URL) {
+    return `${config.dev.NGROK_URL}${path}`;
+  }
+  return `${config.supabase.SUPABASE_URL}${path}`;
 }

@@ -33,6 +33,7 @@ export function setupTestEnv(): void {
 
   // 인증/보안 설정
   Deno.env.set("INTERNAL_WEBHOOK_SECRET", "test-webhook-secret");
+  Deno.env.set("ENCRYPTION_KEY", "test-encryption-key");
 
   // 환경 설정
   Deno.env.set("ENVIRONMENT", "local");
