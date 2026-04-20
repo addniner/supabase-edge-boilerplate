@@ -91,34 +91,19 @@ brew install terraform
 ### 4.3 환경변수 파일 생성
 
 ```bash
-# 공통 설정 (Supabase 인증)
-cp infra/.env.example infra/.env
-
-# 환경별 설정
 cp infra/.env.example infra/.env.staging
 cp infra/.env.example infra/.env.production
-```
-
-**`infra/.env`** — 공통 변수:
-```bash
-SUPABASE_ACCESS_TOKEN=sbp_xxxxxxxxxxxxxxxxxxxx
-ORGANIZATION_ID=xxxxxxxxxxxxxxxxxxxx
-```
-
-**`infra/.env.staging`** — 환경별 변수:
-```bash
-TF_VAR_database_password=your_secure_password
-TF_VAR_site_url=http://localhost:3000
+# → 각 파일에 토큰, 비밀번호 등 입력 (키 설명은 infra/.env.example 참조)
 ```
 
 ### 4.4 프로젝트 생성
 
 ```bash
 # 미리보기
-.scripts/infra-deploy.sh staging plan
+.scripts/infra-tf.sh staging plan
 
 # 프로젝트 생성 (Supabase 프로젝트가 생성됨)
-.scripts/infra-deploy.sh staging apply
+.scripts/infra-tf.sh staging apply
 ```
 
 `apply` 완료 후 출력되는 값:
@@ -153,13 +138,13 @@ GitHub repo `Settings > Environments > staging`에 시크릿 등록:
 | 시크릿 | 설명 |
 |--------|------|
 | `SUPABASE_ACCESS_TOKEN` | Supabase 액세스 토큰 |
-| `PROJECT_ID` | `terraform output -raw project_id`로 확인 |
+| `SUPABASE_PROJECT_ID` | `terraform output -raw project_id`로 확인 |
 
 ### 4.7 인프라 삭제
 
 ```bash
 # 주의: Supabase 프로젝트가 삭제됩니다
-.scripts/infra-deploy.sh staging destroy
+.scripts/infra-tf.sh staging destroy
 ```
 
 ---
@@ -181,8 +166,7 @@ GitHub repo `Settings > Environments > staging`에 시크릿 등록:
 - [ ] Terraform 설치
 - [ ] Supabase Access Token 발급
 - [ ] Organization ID 확인
-- [ ] `infra/.env` 생성
-- [ ] `infra/.env.staging` 생성
-- [ ] `.scripts/infra-deploy.sh staging apply` 실행
+- [ ] `infra/.env.staging` 생성 (`infra/.env.example` 참고)
+- [ ] `.scripts/infra-tf.sh staging apply` 실행
 - [ ] `project_id` 확인
-- [ ] GitHub Secrets 등록 (`SUPABASE_ACCESS_TOKEN`, `PROJECT_ID`)
+- [ ] GitHub Secrets 등록 (`SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_ID`)

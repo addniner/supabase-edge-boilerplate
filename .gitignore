@@ -42,7 +42,7 @@ supabase/.temp
 supabase/.branches
 supabase/functions/api/_coverage
 
-# Storage (keep only .gitkeep)
-supabase/storage/**
-!supabase/storage/**/
-!supabase/storage/**/.gitkeep
+# Storage seeds (keep only .gitkeep)
+supabase/seeds/storage/**
+!supabase/seeds/storage/**/
+!supabase/seeds/storage/**/.gitkeep

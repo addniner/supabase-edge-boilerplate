@@ -42,6 +42,7 @@ const healthCheckRoute = createRoute({
 // Route Handler
 // ============================================
 
+// health check는 usecase 없이 직접 응답 — c.json() 허용
 healthRoute.openapi(healthCheckRoute, (c) => {
   return c.json({
     status: "healthy",

@@ -46,36 +46,12 @@ supabase -v
 ## 2. 환경변수 파일 생성
 
 ```bash
-# 공통 설정
-cp infra/.env.example infra/.env
-
-# 환경별 설정
 cp infra/.env.example infra/.env.staging
 cp infra/.env.example infra/.env.production
+# → 각 파일에 토큰, 비밀번호 등 입력
 ```
 
-### `infra/.env` — 공통 (인증)
-
-```bash
-SUPABASE_ACCESS_TOKEN=sbp_xxxxxxxxxxxxxxxxxxxx
-ORGANIZATION_ID=xxxxxxxxxxxxxxxxxxxx
-TF_API_TOKEN=your_terraform_cloud_api_token
-```
-
-### `infra/.env.staging` — 환경별
-
-```bash
-# Terraform 변수 (TF_VAR_ 접두사로 자동 인식)
-TF_VAR_database_password=your_secure_password
-TF_VAR_site_url=http://localhost:3000
-
-# Google OAuth (선택사항)
-TF_VAR_external_google_client_id=xxxx.apps.googleusercontent.com
-TF_VAR_external_google_secret=GOCSPX-xxxx
-
-# Terraform apply 후 terraform output project_id로 확인하여 기록
-PROJECT_ID=your_project_id
-```
+> 키 설명 및 발급처는 `infra/.env.example` 참조
 
 > Google OAuth는 선택사항입니다. 비워두면 활성화만 되고 실제 연동은 안 됩니다.
 
@@ -100,10 +76,10 @@ PROJECT_ID=your_project_id
 
 ```bash
 # 미리보기
-.scripts/infra-deploy.sh staging plan
+.scripts/infra-tf.sh staging plan
 
 # 생성
-.scripts/infra-deploy.sh staging apply
+.scripts/infra-tf.sh staging apply
 ```
 
 `apply` 완료 후 출력값:
@@ -149,7 +125,7 @@ supabase functions deploy --no-verify-jwt
 ### Edge Functions 환경변수 배포
 
 ```bash
-.scripts/env-deploy.sh
+.scripts/infra-functions-secrets-sync.sh
 # → staging 또는 production 선택
 ```
 
@@ -164,7 +140,7 @@ supabase functions deploy --no-verify-jwt
 스크립트로 일괄 등록:
 
 ```bash
-.scripts/setup-github-secrets.sh
+.scripts/infra-github-secrets-sync.sh
 ```
 
 또는 수동 등록 (`Settings > Secrets and variables > Actions`):
@@ -181,7 +157,7 @@ supabase functions deploy --no-verify-jwt
 
 | 시크릿 | 설명 |
 |--------|------|
-| `PROJECT_ID` | `terraform output -raw project_id` |
+| `SUPABASE_PROJECT_ID` | `terraform output -raw project_id` |
 | `DATABASE_PASSWORD` | DB 비밀번호 |
 | `SITE_URL` | 사이트 URL |
 | `EXTERNAL_GOOGLE_CLIENT_ID` | Google OAuth 클라이언트 ID |
@@ -217,7 +193,7 @@ Terraform State는 **Terraform Cloud**로 원격 관리됩니다.
 
 ```bash
 # 주의: Supabase 프로젝트가 삭제됩니다
-.scripts/infra-deploy.sh staging destroy
+.scripts/infra-tf.sh staging destroy
 ```
 
 ---
