@@ -23,8 +23,10 @@ infra/
 ```bash
 .scripts/infra-tf.sh staging plan
 .scripts/infra-tf.sh staging apply
-.scripts/infra-github-secrets-sync.sh     # GitHub Secrets 동기화
-.scripts/infra-functions-secrets-sync.sh  # Functions secrets 동기화
+.scripts/infra-github-secrets-sync.sh --env staging     # GitHub Secrets 동기화 (특정 환경)
+.scripts/infra-github-secrets-sync.sh --all              # GitHub Secrets 동기화 (전체)
+.scripts/infra-functions-secrets-sync.sh --env staging   # Functions secrets 동기화 (특정 환경)
+.scripts/infra-functions-secrets-sync.sh --all            # Functions secrets 동기화 (전체)
 .scripts/infra-tf-fmt.sh                  # 포맷 적용
 .scripts/infra-tf-fmt.sh check            # 포맷 검사만 (CI용)
 ```

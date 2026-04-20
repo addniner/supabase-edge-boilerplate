@@ -5,11 +5,13 @@
  */
 export class DomainError extends Error {
   public readonly code: string;
+  public readonly errors: DomainErrorItem[] | null;
 
-  constructor(code: string, message: string) {
+  constructor(code: string, message: string, errors?: DomainErrorItem[] | null) {
     super(message);
     this.name = this.constructor.name;
     this.code = code;
+    this.errors = errors ?? null;
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }

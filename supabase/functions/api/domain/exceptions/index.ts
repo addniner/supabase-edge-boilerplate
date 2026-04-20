@@ -6,4 +6,6 @@ export { ForbiddenError } from "./forbidden.error.ts";
 export { ConflictError } from "./conflict.error.ts";
 export { UnauthorizedError } from "./unauthorized.error.ts";
 export { InternalServerError } from "./internal-server.error.ts";
+export { ProviderAuthError } from "./provider-auth.error.ts";
 export { TooManyRequestsError } from "./too-many-requests.error.ts";
+export { EnvironmentVariableError } from "./environment-variable.error.ts";

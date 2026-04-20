@@ -16,7 +16,8 @@ Clients handle **external API calls** and nothing else.
 - ✅ **자체 응답 타입 정의** - 외부 API 응답 형태를 인터페이스로 선언
 - ✅ **에러 변환** - 외부 API 에러를 DomainError로 변환
 - ❌ **Entity 타입 import 금지** - repository 타입과 독립적
-- ❌ **비즈니스 로직 금지** - 데이터 변환은 usecase에서
+- ❌ **비즈니스 로직 금지** - 데이터 변환은 adapter에서
+- ❌ **Gateway 인터페이스 구현 금지** - gateway 구현은 adapter가 담당
 
 ## Template
 
@@ -52,6 +53,16 @@ export class MyClient {
 }
 
 ```
+
+## Adapter와의 관계
+
+Client는 raw API 응답을 반환하고, Adapter가 이를 도메인 타입으로 변환한다:
+
+```
+UseCase → Adapter (implements Gateway) → Client (HTTP only) → External API
+```
+
+SDK를 사용하는 경우(OpenAI 등)는 Client 없이 Adapter에서 SDK를 직접 사용한다.
 
 ## Important Notes
 

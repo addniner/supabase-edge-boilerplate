@@ -39,6 +39,11 @@ jobs:
       # ============================================
       # 2. Validation
       # ============================================
+      - name: Check migration integrity
+        run: |
+          chmod +x .scripts/migration-guard.sh
+          ./.scripts/migration-guard.sh
+
       - name: Run Edge Functions validation
         run: |
           chmod +x .scripts/deno-check.sh
@@ -52,6 +57,9 @@ jobs:
 
       - name: Deploy database migrations
         run: supabase db push
+
+      - name: Seed storage buckets
+        run: supabase seed buckets --linked --yes
 
       - name: Deploy Edge Functions
         run: supabase functions deploy --no-verify-jwt --prune --yes

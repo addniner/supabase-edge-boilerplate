@@ -11,7 +11,7 @@ import type { SupabaseClient, User } from "@supabase-js";
 
 import { createAuthSupabaseClient } from "@clients";
 import { WHITE_LISTED_ROUTES } from "@config";
-import { UnauthorizedError } from "@errors";
+import { UnauthorizedError } from "@domain/exceptions";
 import { Logger } from "@logger";
 
 /**

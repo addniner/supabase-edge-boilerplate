@@ -49,7 +49,8 @@ supabase/functions/api/
 │   └── utils/             # oas 헬퍼 (openapi.ts)
 │
 ├── infrastructure/        # Infrastructure Layer — 외부 시스템 통신
-│   ├── clients/           # 외부 API 클라이언트
+│   ├── adapters/          # Gateway 구현체 (SDK/Client → 도메인 인터페이스 변환)
+│   ├── clients/           # 외부 API 순수 HTTP 클라이언트
 │   ├── config/            # 환경변수 + config.types.ts
 │   ├── db/                # Drizzle context, schema(엔티티 타입), BaseRepository
 │   ├── factories/         # gateway factory
@@ -74,6 +75,7 @@ import { Permission, Role } from "@domain";
 import type { MyGateway } from "@domain/gateways";
 import type { MyRepository } from "@domain/repositories";
 import { MyRepositoryImpl } from "@repositories";
+import { MyGatewayAdapter } from "@adapters";
 import { MyGatewayFactory } from "@factories";
 import { DoSomethingUseCase } from "@usecases/my-feature";
 ```
@@ -85,13 +87,13 @@ Never use relative paths across layer boundaries. Always register new aliases in
 ```
 presentation → application → domain ← infrastructure
                     ↓
-              infrastructure (usecase에서 client/repo 직접 import — 생성자 기본값 DI)
+              infrastructure (usecase에서 adapter/repo 직접 import — 생성자 기본값 DI)
 ```
 
 - **domain**: 순수 비즈니스 규칙 + 타입. `import type` from `@db`만 허용 (엔티티 타입, ADR-001). gateway/repository 인터페이스 정의
 - **application**: domain + infrastructure import (생성자 기본값 DI). 예외는 `@domain/exceptions`에서 import
 - **presentation**: application(usecase) + domain import. infrastructure 직접 참조 금지 (예외: middleware에서 `@config`, `@clients`, `@repositories` 접근은 허용)
-- **infrastructure**: domain import 가능. repository/client 구현체는 domain 인터페이스를 implements
+- **infrastructure**: domain import 가능. adapter/repository 구현체는 domain 인터페이스를 implements. client는 순수 HTTP 통신만 담당
 
 ## Route Pattern (OpenAPI)
 
@@ -216,15 +218,18 @@ Never use `console.*` directly (lint rule: `no-console`).
 - Do not add routes to `WHITE_LISTED_ROUTES` carelessly — authentication is bypassed
 - Do not use `prepare: true` with transaction pooler (port 6543) — already handled in `drizzle.context.ts`
 - Do not put types in `shared/` — each layer owns its types
+- Do not introduce new architectural patterns, layers, or conventions not documented in `.claude/rules/` — 기존 규칙에 없는 구조(새로운 디렉토리, 새로운 패턴, 새로운 추상화 레이어 등)를 임의로 추가하지 마라. 필요하다면 먼저 사용자와 합의 후 규칙을 업데이트하고 적용할 것
 
 ## Detailed Rules
 
 Path-specific rules are auto-loaded in `.claude/rules/`:
 
-- **[database.md](.claude/rules/database/database.md)** - DB schema, RLS, timestamps, migrations
+- **[database.md](.claude/rules/database/database.md)** - DB schema, RLS, timestamps, migrations, seed data
+- **[storage.md](.claude/rules/storage.md)** - Storage bucket 관리 (config.toml 선언, 배포, RLS)
 - **[repositories.md](.claude/rules/layers/repositories.md)** - Data access layer
 - **[usecases.md](.claude/rules/layers/usecases.md)** - Business logic layer
-- **[clients.md](.claude/rules/layers/clients.md)** - External API clients
+- **[adapters.md](.claude/rules/layers/adapters.md)** - Gateway adapters (SDK/Client → 도메인 인터페이스)
+- **[clients.md](.claude/rules/layers/clients.md)** - External API clients (순수 HTTP)
 - **[routes.md](.claude/rules/layers/routes.md)** - HTTP route layer (OpenAPI)
 - **[testing.md](.claude/rules/layers/testing.md)** - Test conventions, mock patterns, coverage
 - **[infra.md](.claude/rules/infra.md)** - Terraform infrastructure

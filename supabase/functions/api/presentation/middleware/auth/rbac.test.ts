@@ -1,4 +1,4 @@
-import "@test";
+import "@test/env";
 
 import { assertEquals } from "@std/assert";
 import { Hono } from "@hono";
@@ -115,8 +115,8 @@ Deno.test("requirePermission - 와일드카드 매칭: resources:* → resources
   assertEquals(res.status, 200);
 });
 
-Deno.test("requirePermission - 다른 리소스 와일드카드 불일치: resources:create ≠ resources:read → 403", async () => {
-  const app = createApp([Permission.RESOURCES_CREATE], (app) => {
+Deno.test("requirePermission - 다른 리소스 와일드카드 불일치: others:* ≠ resources:read → 403", async () => {
+  const app = createApp(["others:*" as Permission], (app) => {
     app.get("/test/resources", requirePermission(Permission.RESOURCES_READ), (c) =>
       c.json({ ok: true })
     );
@@ -144,7 +144,7 @@ Deno.test("requireAnyPermission - 하나만 있어도 통과 (OR)", async () => 
 });
 
 Deno.test("requireAnyPermission - 아무것도 없으면 403", async () => {
-  const app = createApp([Permission.RESOURCES_CREATE], (app) => {
+  const app = createApp(["others:read" as Permission], (app) => {
     app.get(
       "/test/any",
       requireAnyPermission([Permission.RESOURCES_READ, Permission.RESOURCES_DELETE]),

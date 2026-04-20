@@ -1,12 +1,10 @@
 /**
  * 에러 핸들러
- * CustomError → HTTP 에러 응답 직렬화
  * DomainError → HTTP 상태코드 매핑 후 직렬화
  */
 
 import type { Context } from "@hono";
 import type { ErrorEnvelope, ErrorItem } from "../errors/types.ts";
-import { CustomError, ValidationError } from "@errors";
 import {
   BadRequestError,
   ConflictError,
@@ -14,8 +12,10 @@ import {
   ForbiddenError,
   InternalServerError,
   NotFoundError,
+  ProviderAuthError,
   TooManyRequestsError,
   UnauthorizedError,
+  ValidationError,
 } from "@domain/exceptions";
 import { Logger } from "@logger";
 import { isProduction } from "@config";
@@ -27,8 +27,16 @@ function createErrorEnvelope(
   code: string,
   message: string,
   errors: ErrorItem[] | null,
+  extras?: Partial<Pick<ErrorEnvelope, "provider" | "providerStatus">>,
 ): ErrorEnvelope {
-  return { isSuccess: false, code, message, data: null, errors };
+  return {
+    isSuccess: false,
+    code,
+    message,
+    data: null,
+    errors,
+    ...extras,
+  };
 }
 
 /** DomainError → HTTP 상태코드 매핑 */
@@ -40,21 +48,16 @@ function domainErrorToStatus(error: DomainError): ContentfulStatusCode {
   if (error instanceof ForbiddenError) return 403;
   if (error instanceof ConflictError) return 409;
   if (error instanceof TooManyRequestsError) return 429;
+  // ProviderAuthError — 외부 provider 가 사용자 키를 거부. 백엔드 자체 오류가
+  // 아니므로 502(Bad Gateway) 매핑. 단 InternalServerError 체크보다 위에 둔다.
+  if (error instanceof ProviderAuthError) return 502;
   if (error instanceof InternalServerError) return 500;
   return 500;
 }
 
 /** DomainError에서 errors 배열 추출 */
 function extractDomainErrors(error: DomainError): ErrorItem[] | null {
-  if (
-    error instanceof BadRequestError ||
-    error instanceof ValidationError ||
-    error instanceof InternalServerError ||
-    error instanceof TooManyRequestsError
-  ) {
-    return error.errors;
-  }
-  return null;
+  return error.errors;
 }
 
 /** 공통 에러 핸들러 */
@@ -96,27 +99,15 @@ export const errorHandler = (err: Error, c: Context) => {
       errors,
     }, domainErr);
 
+    // ProviderAuthError 는 response body 에 provider/providerStatus 를 추가로 실어
+    // 클라이언트가 "어떤 provider 키를 확인해야 하는지" 정확히 안내할 수 있게 한다.
+    const extras = domainErr instanceof ProviderAuthError
+      ? { provider: domainErr.provider, providerStatus: domainErr.providerStatus }
+      : undefined;
+
     return c.json(
-      createErrorEnvelope(domainErr.code, domainErr.message, errors),
+      createErrorEnvelope(domainErr.code, domainErr.message, errors, extras),
       status,
-    );
-  }
-
-  // CustomError 처리 - presentation 레이어 전용 에러 (하위 호환)
-  if (err instanceof CustomError) {
-    const customErr = err as CustomError;
-    Logger.warn("Business logic error", {
-      ...context,
-      code: customErr.code,
-      statusCode: customErr.status,
-      errors: customErr.errors,
-      meta: customErr.meta,
-    }, customErr);
-
-    const errors = customErr.errors ?? null;
-    return c.json(
-      createErrorEnvelope(customErr.code, customErr.message, errors),
-      customErr.status,
     );
   }
 

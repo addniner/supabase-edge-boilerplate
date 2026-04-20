@@ -1,8 +1,8 @@
-import "@test";
+import "@test/env";
 
 import { assertEquals } from "@std/assert";
 import { resetConfigCache } from "@config";
-import { TEST_STORAGE_CONFIG } from "@test";
+import { TEST_STORAGE_CONFIG } from "@test/env";
 import { PublicStorageUrl } from "./public-storage-url.ts";
 
 resetConfigCache();
@@ -10,31 +10,31 @@ resetConfigCache();
 // --- PublicStorageUrl.bucket() -----------------------------------------------
 
 Deno.test("PublicStorageUrl.bucket - 환경변수에 정의된 버킷으로 URL 생성", () => {
-  const url = PublicStorageUrl.bucket("ASSETS_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_ASSETS")
     .path("images/photo.jpg")
     .build();
 
   assertEquals(
     url,
-    `https://test.supabase.co/storage/v1/object/public/${TEST_STORAGE_CONFIG.ASSETS_BUCKET}/images/photo.jpg`,
+    `https://test.supabase.co/storage/v1/object/public/${TEST_STORAGE_CONFIG.STORAGE_BUCKET_ASSETS}/images/photo.jpg`,
   );
 });
 
 Deno.test("PublicStorageUrl.bucket - public-resources 버킷으로 URL 생성", () => {
-  const url = PublicStorageUrl.bucket("PUBLIC_RESOURCES_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_PUBLIC_RESOURCES")
     .path("categories/image.svg")
     .build();
 
   assertEquals(
     url,
-    `https://test.supabase.co/storage/v1/object/public/${TEST_STORAGE_CONFIG.PUBLIC_RESOURCES_BUCKET}/categories/image.svg`,
+    `https://test.supabase.co/storage/v1/object/public/${TEST_STORAGE_CONFIG.STORAGE_BUCKET_PUBLIC_RESOURCES}/categories/image.svg`,
   );
 });
 
 // --- path() ------------------------------------------------------------------
 
 Deno.test("PublicStorageUrl.path - 전체 경로 설정", () => {
-  const url = PublicStorageUrl.bucket("PROJECTS_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_PROJECTS")
     .path("dir/subdir/file.png")
     .build();
 
@@ -42,7 +42,7 @@ Deno.test("PublicStorageUrl.path - 전체 경로 설정", () => {
 });
 
 Deno.test("PublicStorageUrl.path - null 경로: buildOrNull이 null 반환", () => {
-  const url = PublicStorageUrl.bucket("PROJECTS_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_PROJECTS")
     .path(null)
     .buildOrNull();
 
@@ -50,7 +50,7 @@ Deno.test("PublicStorageUrl.path - null 경로: buildOrNull이 null 반환", () 
 });
 
 Deno.test("PublicStorageUrl.path - 연속 호출 시 이전 segments 초기화", () => {
-  const url = PublicStorageUrl.bucket("PROJECTS_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_PROJECTS")
     .path("first/path")
     .path("second/path")
     .build();
@@ -62,7 +62,7 @@ Deno.test("PublicStorageUrl.path - 연속 호출 시 이전 segments 초기화",
 // --- directory() + file() ---------------------------------------------------
 
 Deno.test("PublicStorageUrl.directory+file - 디렉토리와 파일명 분리 조합", () => {
-  const url = PublicStorageUrl.bucket("ASSETS_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_ASSETS")
     .directory("categories")
     .file("image.svg")
     .build();
@@ -71,7 +71,7 @@ Deno.test("PublicStorageUrl.directory+file - 디렉토리와 파일명 분리 �
 });
 
 Deno.test("PublicStorageUrl.directory+file - 여러 디렉토리 체이닝", () => {
-  const url = PublicStorageUrl.bucket("ASSETS_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_ASSETS")
     .directory("level1")
     .directory("level2")
     .directory("level3")
@@ -82,7 +82,7 @@ Deno.test("PublicStorageUrl.directory+file - 여러 디렉토리 체이닝", () 
 });
 
 Deno.test("PublicStorageUrl.directory+file - null 디렉토리는 무시됨", () => {
-  const url = PublicStorageUrl.bucket("ASSETS_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_ASSETS")
     .directory("valid")
     .directory(null)
     .file("file.png")
@@ -93,7 +93,7 @@ Deno.test("PublicStorageUrl.directory+file - null 디렉토리는 무시됨", ()
 });
 
 Deno.test("PublicStorageUrl.directory+file - null 파일명은 무시됨", () => {
-  const url = PublicStorageUrl.bucket("ASSETS_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_ASSETS")
     .directory("dir")
     .file(null)
     .buildOrNull();
@@ -104,7 +104,7 @@ Deno.test("PublicStorageUrl.directory+file - null 파일명은 무시됨", () =>
 // --- build() -----------------------------------------------------------------
 
 Deno.test("PublicStorageUrl.build - 항상 string 반환", () => {
-  const url = PublicStorageUrl.bucket("PROJECTS_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_PROJECTS")
     .path("file.png")
     .build();
 
@@ -112,11 +112,11 @@ Deno.test("PublicStorageUrl.build - 항상 string 반환", () => {
 });
 
 Deno.test("PublicStorageUrl.build - segments 비어있어도 URL 생성됨", () => {
-  const url = PublicStorageUrl.bucket("PROJECTS_BUCKET").build();
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_PROJECTS").build();
 
   assertEquals(
     url.includes(
-      `/storage/v1/object/public/${TEST_STORAGE_CONFIG.PROJECTS_BUCKET}/`,
+      `/storage/v1/object/public/${TEST_STORAGE_CONFIG.STORAGE_BUCKET_PROJECTS}/`,
     ),
     true,
   );
@@ -125,7 +125,7 @@ Deno.test("PublicStorageUrl.build - segments 비어있어도 URL 생성됨", () 
 // --- buildOrNull() -----------------------------------------------------------
 
 Deno.test("PublicStorageUrl.buildOrNull - 유효한 경로: string 반환", () => {
-  const url = PublicStorageUrl.bucket("ASSETS_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_ASSETS")
     .path("file.png")
     .buildOrNull();
 
@@ -134,7 +134,7 @@ Deno.test("PublicStorageUrl.buildOrNull - 유효한 경로: string 반환", () =
 });
 
 Deno.test("PublicStorageUrl.buildOrNull - segments 비어있으면 null 반환", () => {
-  const url = PublicStorageUrl.bucket("ASSETS_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_ASSETS")
     .path(null)
     .buildOrNull();
 
@@ -142,7 +142,7 @@ Deno.test("PublicStorageUrl.buildOrNull - segments 비어있으면 null 반환",
 });
 
 Deno.test("PublicStorageUrl.buildOrNull - 빈 문자열 segment는 무시됨", () => {
-  const url = PublicStorageUrl.bucket("ASSETS_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_ASSETS")
     .directory("")
     .file("file.png")
     .buildOrNull();
@@ -154,20 +154,20 @@ Deno.test("PublicStorageUrl.buildOrNull - 빈 문자열 segment는 무시됨", (
 
 Deno.test("PublicStorageUrl - 카테고리 이미지 URL 생성", () => {
   const fileName = "electronics.svg";
-  const url = PublicStorageUrl.bucket("PUBLIC_RESOURCES_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_PUBLIC_RESOURCES")
     .directory("categories")
     .file(fileName)
     .build();
 
   assertEquals(
     url,
-    `https://test.supabase.co/storage/v1/object/public/${TEST_STORAGE_CONFIG.PUBLIC_RESOURCES_BUCKET}/categories/electronics.svg`,
+    `https://test.supabase.co/storage/v1/object/public/${TEST_STORAGE_CONFIG.STORAGE_BUCKET_PUBLIC_RESOURCES}/categories/electronics.svg`,
   );
 });
 
 Deno.test("PublicStorageUrl - nullable 썸네일 경로: null 반환", () => {
   const thumbnailPath: string | null = null;
-  const url = PublicStorageUrl.bucket("PUBLIC_RESOURCES_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_PUBLIC_RESOURCES")
     .path(thumbnailPath)
     .buildOrNull();
 
@@ -176,13 +176,13 @@ Deno.test("PublicStorageUrl - nullable 썸네일 경로: null 반환", () => {
 
 Deno.test("PublicStorageUrl - 이미지 생성 스타일 썸네일 URL", () => {
   const styleThumbnailPath = "image-generation-styles/styles/studio.png";
-  const url = PublicStorageUrl.bucket("PUBLIC_RESOURCES_BUCKET")
+  const url = PublicStorageUrl.bucket("STORAGE_BUCKET_PUBLIC_RESOURCES")
     .path(styleThumbnailPath)
     .build();
 
   assertEquals(
     url,
-    `https://test.supabase.co/storage/v1/object/public/${TEST_STORAGE_CONFIG.PUBLIC_RESOURCES_BUCKET}/image-generation-styles/styles/studio.png`,
+    `https://test.supabase.co/storage/v1/object/public/${TEST_STORAGE_CONFIG.STORAGE_BUCKET_PUBLIC_RESOURCES}/image-generation-styles/styles/studio.png`,
   );
 });
 
@@ -194,20 +194,20 @@ Deno.test("PublicStorageUrl - 샘플 이미지 배열 URL 변환", () => {
   ];
 
   const urls = samplePaths.map((path) =>
-    PublicStorageUrl.bucket("PUBLIC_RESOURCES_BUCKET").path(path).build()
+    PublicStorageUrl.bucket("STORAGE_BUCKET_PUBLIC_RESOURCES").path(path).build()
   );
 
   assertEquals(urls.length, 3);
   assertEquals(
     urls[0],
-    `https://test.supabase.co/storage/v1/object/public/${TEST_STORAGE_CONFIG.PUBLIC_RESOURCES_BUCKET}/samples/001.png`,
+    `https://test.supabase.co/storage/v1/object/public/${TEST_STORAGE_CONFIG.STORAGE_BUCKET_PUBLIC_RESOURCES}/samples/001.png`,
   );
   assertEquals(
     urls[1],
-    `https://test.supabase.co/storage/v1/object/public/${TEST_STORAGE_CONFIG.PUBLIC_RESOURCES_BUCKET}/samples/002.png`,
+    `https://test.supabase.co/storage/v1/object/public/${TEST_STORAGE_CONFIG.STORAGE_BUCKET_PUBLIC_RESOURCES}/samples/002.png`,
   );
   assertEquals(
     urls[2],
-    `https://test.supabase.co/storage/v1/object/public/${TEST_STORAGE_CONFIG.PUBLIC_RESOURCES_BUCKET}/samples/003.png`,
+    `https://test.supabase.co/storage/v1/object/public/${TEST_STORAGE_CONFIG.STORAGE_BUCKET_PUBLIC_RESOURCES}/samples/003.png`,
   );
 });

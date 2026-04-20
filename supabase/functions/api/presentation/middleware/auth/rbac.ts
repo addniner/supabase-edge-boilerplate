@@ -18,7 +18,7 @@ import type { Context, Next } from "@hono";
 import { except } from "@hono/combine";
 
 import { WHITE_LISTED_ROUTES } from "@config";
-import { ForbiddenError } from "@errors";
+import { ForbiddenError } from "@domain/exceptions";
 import { Permission, Role } from "@domain";
 import { Logger } from "@logger";
 import type { UserRoleRepository } from "@domain/repositories";

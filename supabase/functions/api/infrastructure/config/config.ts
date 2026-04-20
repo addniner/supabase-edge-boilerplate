@@ -4,7 +4,7 @@
  * 모든 환경 변수를 중앙에서 관리하고 타입 안전성을 보장합니다.
  */
 
-import { EnvironmentVariableError } from "@errors";
+import { EnvironmentVariableError } from "@domain/exceptions";
 export type { StorageConfig } from "./config.types.ts";
 import type {
   AppConfig,
@@ -82,22 +82,14 @@ function loadDevConfig(): DevConfig {
 }
 
 /**
- * Storage 환경 변수 로드 (선택적)
+ * Storage 환경 변수 로드
  */
-function loadStorageConfig(): StorageConfig | null {
-  const json = Deno.env.get("STORAGE_CONFIG_JSON");
-  if (!json?.trim()) return null;
-
-  try {
-    const obj = JSON.parse(json);
-    return {
-      PROJECTS_BUCKET: obj.PROJECTS_BUCKET ?? "",
-      ASSETS_BUCKET: obj.ASSETS_BUCKET ?? "",
-      PUBLIC_RESOURCES_BUCKET: obj.PUBLIC_RESOURCES_BUCKET ?? "",
-    };
-  } catch {
-    return null;
-  }
+function loadStorageConfig(): StorageConfig {
+  return {
+    STORAGE_BUCKET_PROJECTS: getOptionalEnv("STORAGE_BUCKET_PROJECTS"),
+    STORAGE_BUCKET_ASSETS: getOptionalEnv("STORAGE_BUCKET_ASSETS"),
+    STORAGE_BUCKET_PUBLIC_RESOURCES: getOptionalEnv("STORAGE_BUCKET_PUBLIC_RESOURCES"),
+  };
 }
 
 /**

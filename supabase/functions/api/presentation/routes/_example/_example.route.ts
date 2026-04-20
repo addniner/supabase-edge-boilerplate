@@ -5,7 +5,7 @@
 
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import { Response } from "@middleware";
-import { NotFoundError } from "@errors";
+import { NotFoundError } from "@domain/exceptions";
 import { oas } from "@openapi";
 import { GetExampleUseCase, CreateExampleUseCase } from "@usecases/_example";
 import { ExampleResponseSchema, CreateExampleSchema } from "./_example.schema.ts";

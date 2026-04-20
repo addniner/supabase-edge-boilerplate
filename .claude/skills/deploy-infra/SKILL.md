@@ -15,7 +15,8 @@ description: Terraform 인프라 배포. staging/production 인프라 변경, Gi
 .scripts/infra-tf.sh production apply
 
 # GitHub Secrets 동기화
-.scripts/infra-github-secrets-sync.sh
+.scripts/infra-github-secrets-sync.sh --env staging
+.scripts/infra-github-secrets-sync.sh --all
 
 # Terraform 포맷팅
 .scripts/infra-tf-fmt.sh         # 포맷 적용

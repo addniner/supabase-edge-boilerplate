@@ -1,4 +1,4 @@
-import "@test";
+import "@test/env";
 
 import { assertEquals } from "@std/assert";
 import { z } from "@zod";
@@ -115,4 +115,62 @@ Deno.test("oas.formBody - multipart/form-data content 구조", () => {
   assertEquals(typeof result.body, "object");
   assertEquals(typeof result.body.content["multipart/form-data"], "object");
   assertEquals(result.body.content["multipart/form-data"].schema, schema);
+});
+
+// =============================================================================
+// oas.noContent
+// =============================================================================
+
+Deno.test("oas.noContent - 204 키 존재 및 description 기본값", () => {
+  const result = oas.noContent();
+
+  assertEquals(typeof result[204], "object");
+  assertEquals(result[204].description, "성공 (응답 본문 없음)");
+});
+
+Deno.test("oas.noContent - 커스텀 description", () => {
+  const result = oas.noContent("삭제 완료");
+
+  assertEquals(result[204].description, "삭제 완료");
+});
+
+// =============================================================================
+// oas.okOrStream
+// =============================================================================
+
+Deno.test("oas.okOrStream - JSON + SSE 두 content type 포함", () => {
+  const jsonSchema = z.object({ id: z.string() });
+  const chunkSchema = z.object({ delta: z.string() });
+  const result = oas.okOrStream(jsonSchema, chunkSchema, "스트리밍 설명");
+
+  assertEquals(typeof result[200], "object");
+  const contentTypes = Object.keys(result[200].content);
+  assertEquals(contentTypes.includes("application/json"), true);
+  assertEquals(contentTypes.includes("text/event-stream"), true);
+  assertEquals(result[200].content["text/event-stream"].schema, chunkSchema);
+});
+
+Deno.test("oas.okOrStream - description에 SSE 설명 포함", () => {
+  const result = oas.okOrStream(z.string(), z.string(), "chunk format", "조회 성공");
+
+  assertEquals(result[200].description.includes("조회 성공"), true);
+  assertEquals(result[200].description.includes("SSE Streaming"), true);
+  assertEquals(result[200].description.includes("chunk format"), true);
+});
+
+Deno.test("oas.okOrStream - JSON envelope 스키마 파싱 가능", () => {
+  const jsonSchema = z.object({ text: z.string() });
+  const chunkSchema = z.object({ delta: z.string() });
+  const result = oas.okOrStream(jsonSchema, chunkSchema, "설명");
+
+  const schema = result[200].content["application/json"].schema;
+  const parsed = schema.parse({
+    isSuccess: true,
+    code: "OK",
+    message: "success",
+    data: { text: "hello" },
+    errors: null,
+  });
+
+  assertEquals(parsed.data, { text: "hello" });
 });

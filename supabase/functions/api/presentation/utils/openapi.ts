@@ -68,6 +68,37 @@ export const oas = {
     } as const;
   },
 
+  /** 200 OK + SSE stream (stream 파라미터에 따라 JSON 또는 SSE) */
+  okOrStream<T extends z.ZodType, S extends z.ZodType>(
+    jsonSchema: T,
+    chunkSchema: S,
+    streamDescription: string,
+    description = "성공",
+  ) {
+    return {
+      200: {
+        description: `${description}\n\n### SSE Streaming (stream=true)\n\n${streamDescription}`,
+        content: {
+          "application/json": {
+            schema: successEnvelope(jsonSchema),
+          },
+          "text/event-stream": {
+            schema: chunkSchema,
+          },
+        },
+      },
+    } as const;
+  },
+
+  /** 204 No Content */
+  noContent(description = "성공 (응답 본문 없음)") {
+    return {
+      204: {
+        description,
+      },
+    } as const;
+  },
+
   /** 201 Created */
   created<T extends z.ZodType>(dataSchema: T, description = "생성 성공") {
     return {

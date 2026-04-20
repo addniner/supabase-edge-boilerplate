@@ -1,4 +1,4 @@
-import "@test";
+import "@test/env";
 import { assertEquals } from "@std/assert";
 import { isPermission, isRole, Permission, Role } from "./rbac.ts";
 
@@ -51,8 +51,8 @@ Deno.test("isPermission - 구체적 권한: true 반환", () => {
 
 Deno.test("isPermission - Permission enum 값 직접 전달: true 반환", () => {
   assertEquals(isPermission(Permission.ALL), true);
+  assertEquals(isPermission(Permission.RESOURCES_CREATE), true);
   assertEquals(isPermission(Permission.RESOURCES_READ), true);
-  assertEquals(isPermission(Permission.RESOURCES_DELETE), true);
 });
 
 Deno.test("isPermission - 유효하지 않은 문자열: false 반환", () => {

@@ -30,4 +30,8 @@ export interface ErrorEnvelope {
   message: string;
   data: null; // 실패 시 항상 null
   errors: ErrorItem[] | null; // 상세 에러 목록(검증 등)
+  /** code='PROVIDER_AUTH_ERROR' 일 때 외부 provider 이름 */
+  provider?: string;
+  /** code='PROVIDER_AUTH_ERROR' 일 때 provider 의 원본 HTTP status (401/403) */
+  providerStatus?: number;
 }

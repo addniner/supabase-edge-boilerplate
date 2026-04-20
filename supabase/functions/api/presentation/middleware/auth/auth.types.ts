@@ -1,6 +1,6 @@
 import type { User } from "@supabase-js";
 
-export type AuthStrategy = "jwt" | "public" | "webhook";
+export type AuthStrategy = "jwt" | "webhook";
 
 /**
  * Supabase User with custom JWT claims

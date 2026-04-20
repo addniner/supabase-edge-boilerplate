@@ -1,6 +1,6 @@
 import type { Context, Next } from "@hono";
 
-import { UnauthorizedError } from "@errors";
+import { UnauthorizedError } from "@domain/exceptions";
 import { Logger } from "@logger";
 import { getConfig } from "@config";
 

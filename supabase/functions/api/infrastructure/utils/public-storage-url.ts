@@ -9,11 +9,11 @@ import { replaceKongWithNgrok } from "./ngrok.ts";
  * 로컬 환경에서는 자동으로 ngrok URL로 변환됨.
  *
  * @example
- * // 기본 버킷(PUBLIC_RESOURCES_BUCKET) 사용
+ * // 기본 버킷(STORAGE_BUCKET_PUBLIC_RESOURCES) 사용
  * PublicStorageUrl.path("categories/image.svg").build();
  *
  * // 다른 버킷 지정
- * PublicStorageUrl.bucket("ASSETS_BUCKET").path(filePath).buildOrNull();
+ * PublicStorageUrl.bucket("STORAGE_BUCKET_ASSETS").path(filePath).buildOrNull();
  *
  * // 디렉토리 + 파일명 분리
  * PublicStorageUrl.directory("categories").file("image.svg").build();
@@ -23,13 +23,13 @@ export class PublicStorageUrl {
   private _segments: string[] = [];
 
   private constructor(
-    bucketKey: keyof StorageConfig = "PUBLIC_RESOURCES_BUCKET",
+    bucketKey: keyof StorageConfig = "STORAGE_BUCKET_PUBLIC_RESOURCES",
   ) {
-    this._bucket = getConfig().storage?.[bucketKey] ?? "";
+    this._bucket = getConfig().storage[bucketKey];
   }
 
   /**
-   * 다른 버킷 지정 (기본값: PUBLIC_RESOURCES_BUCKET)
+   * 다른 버킷 지정 (기본값: STORAGE_BUCKET_PUBLIC_RESOURCES)
    */
   static bucket(bucketKey: keyof StorageConfig): PublicStorageUrl {
     return new PublicStorageUrl(bucketKey);

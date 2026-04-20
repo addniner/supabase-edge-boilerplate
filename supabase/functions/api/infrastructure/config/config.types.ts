@@ -5,9 +5,9 @@ export interface SupabaseConfig {
 }
 
 export interface StorageConfig {
-  PROJECTS_BUCKET: string;
-  ASSETS_BUCKET: string;
-  PUBLIC_RESOURCES_BUCKET: string;
+  STORAGE_BUCKET_PROJECTS: string;
+  STORAGE_BUCKET_ASSETS: string;
+  STORAGE_BUCKET_PUBLIC_RESOURCES: string;
 }
 
 export interface DatabaseConfig {
@@ -28,7 +28,7 @@ export interface DevConfig {
 
 export interface AppConfig {
   supabase: SupabaseConfig;
-  storage: StorageConfig | null;
+  storage: StorageConfig;
   database: DatabaseConfig;
   dev: DevConfig;
   environment: DeployEnvironment;

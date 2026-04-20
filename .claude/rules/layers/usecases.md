@@ -29,13 +29,13 @@ import type { PaymentGateway } from "@domain/gateways";
 import { Logger } from "@logger";
 import type { PaymentsRepository, CreditsRepository } from "@domain/repositories";
 import { PaymentsRepositoryImpl, CreditsRepositoryImpl } from "@repositories";
-import { PortOneClient } from "@clients";
+import { PortOnePaymentAdapter } from "@adapters";
 
 export class MyUseCase {
   constructor(
     private paymentsRepo: PaymentsRepository = new PaymentsRepositoryImpl(),
     private creditsRepo: CreditsRepository = new CreditsRepositoryImpl(),
-    private portone: PaymentGateway = new PortOneClient(),   // gateway DI
+    private portone: PaymentGateway = new PortOnePaymentAdapter(),   // gateway DI
   ) {}
 
   async execute(input: { userId: string }) {
@@ -59,8 +59,8 @@ application/usecases/payment-processing/
 ## DI 패턴
 
 ```typescript
-// 패턴 1: 구현체 직접 주입 (repository, gateway 클래스)
-private portone: PaymentGateway = new PortOneClient(),
+// 패턴 1: 구현체 직접 주입 (repository, gateway adapter)
+private portone: PaymentGateway = new PortOnePaymentAdapter(),
 
 // 패턴 2a: factory 함수 주입 (provider 분기 필요 시)
 private gatewayFactory: typeof createStockVideoGateway = createStockVideoGateway,
@@ -68,7 +68,7 @@ private gatewayFactory: typeof createStockVideoGateway = createStockVideoGateway
 // 패턴 2b: factory 함수 DI (route에서 API keys만 전달, usecase 내부에서 gateway 생성)
 private gatewaysFactory: (apiKeys: TtsApiKeys) => TtsGateway[] = createTtsGateways,
 
-// 패턴 3: 일반 함수 주입 (gateway 클래스 미전환 과도기 — LlmGateway 통합 시 패턴 1로 전환)
+// 패턴 3: 일반 함수 주입 (adapter 미전환 과도기)
 private chatCompletion: typeof createChatCompletion = createChatCompletion,
 ```
 
@@ -77,6 +77,6 @@ private chatCompletion: typeof createChatCompletion = createChatCompletion,
 - Route → UseCase → Repository/Gateway (service 레이어 없음)
 - Usecase 간 조합 가능 (`@usecases/*` alias로 import)
 - 도메인 규칙은 `@domain`에서 import (generatePaymentId, Permission 등)
-- 외부 API 클라이언트는 `@domain/gateways` 인터페이스로 DI (PaymentGateway 등)
+- 외부 API adapter는 `@domain/gateways` 인터페이스로 DI (PaymentGateway 등), 구현체는 `@adapters`에서 import
 - gateway factory는 `@factories`에서 import (createTtsGateway, createStockVideoGateway)
 - 테스트 파일 동위치: `*.usecase.test.ts`

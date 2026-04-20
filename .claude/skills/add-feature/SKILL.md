@@ -103,11 +103,12 @@ export { myRoute };
 
 ```typescript
 import { Logger } from "@logger";
-import { NotFoundError } from "@errors";
-import { MyRepository } from "@repositories";
+import { NotFoundError } from "@domain/exceptions";
+import type { MyRepository } from "@domain/repositories";
+import { MyRepositoryImpl } from "@repositories";
 
 export class MyUseCase {
-  constructor(private repo = new MyRepository()) {}
+  constructor(private repo: MyRepository = new MyRepositoryImpl()) {}
 
   async execute(input: { id: string }) {
     // business logic

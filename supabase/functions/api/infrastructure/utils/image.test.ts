@@ -1,4 +1,4 @@
-import "@test";
+import "@test/env";
 import { assertEquals, assertInstanceOf } from "@std/assert";
 import { decodeBase64ToBinary, extractImageDimensions } from "./image.ts";
 
@@ -32,7 +32,7 @@ Deno.test("decodeBase64ToBinary - data:image/png;base64, 접두사 포함 시 �
   assertEquals(result[3], 0x47);
 });
 
-Deno.test("decodeBase64ToBinary - 빈 문자열 -> 빈 Uint8Array", () => {
+Deno.test("decodeBase64ToBinary - 빈 문자열 → 빈 Uint8Array", () => {
   const result = decodeBase64ToBinary("");
 
   assertInstanceOf(result, Uint8Array);

@@ -1,9 +1,9 @@
-import "@test";
+import "@test/env";
 
 import { assertEquals } from "@std/assert";
 import { Logger } from "./logger.ts";
 
-// --- Tests --------------------------------------------------------------------
+// ─── Tests ────────────────────────────────────────────────────────────────────
 
 Deno.test("Logger - setMinLevel/getMinLevel: 레벨 설정 및 조회", () => {
   const original = Logger.getMinLevel();
@@ -40,7 +40,7 @@ Deno.test("Logger - info 레벨에서 debug 무시", () => {
   try {
     Logger.setMinLevel("info");
     assertEquals(Logger.getMinLevel(), "info");
-    // debug level (priority 0) < info level (priority 1) -> suppressed (no throw)
+    // debug level (priority 0) < info level (priority 1) → suppressed (no throw)
     Logger.debug("suppressed debug");
     // info, warn, error should still be processed without error
     Logger.info("info message");
@@ -56,7 +56,7 @@ Deno.test("Logger - error 레벨에서 debug, info, warn 무시", () => {
   try {
     Logger.setMinLevel("error");
     assertEquals(Logger.getMinLevel(), "error");
-    // debug (0), info (1), warn (2) all < error (3) -> suppressed
+    // debug (0), info (1), warn (2) all < error (3) → suppressed
     Logger.debug("suppressed debug");
     Logger.info("suppressed info");
     Logger.warn("suppressed warn");
